@@ -12,16 +12,32 @@ import {
   IconButton,
   Alert,
 } from "@mui/material";
+import Lock from '@mui/icons-material/Lock';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Email from '@mui/icons-material/Email';
+import Person from '@mui/icons-material/Person';
+import { MenuItem } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import SignUpForm from "./SignUpForm";
+
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (email && password) {
+    if (email && password && role) {
+      if (role === "admin") {
+        navigate("/admin");
+        return;
+      }
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     }
@@ -65,7 +81,10 @@ function LoginForm() {
               justifyContent: "center",
             }}
           >
-            <Box sx={{ maxWidth: 400, mx: "auto", width: "100%" }}>
+            {isSignUp ? (
+              <SignUpForm onSwitchToLogin={() => setIsSignUp(false)} />
+            ) : (
+              <Box sx={{ maxWidth: 400, mx: "auto", width: "100%" }}>
               <Typography
                 variant="h3"
                 component="h1"
@@ -101,6 +120,28 @@ function LoginForm() {
 
               <Box component="form" onSubmit={handleSubmit}>
                 <TextField
+                  select
+                  fullWidth
+                  label="Role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  margin="normal"
+                  required
+                  sx={{ mb: 2 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Person />
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  <MenuItem value="student">Student</MenuItem>
+                  <MenuItem value="teacher">Teacher</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                </TextField>
+
+                <TextField
                   fullWidth
                   label="Email Address"
                   type="email"
@@ -112,12 +153,7 @@ function LoginForm() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <span
-                          className="material-icons"
-                          style={{ color: "#7f8c8d" }}
-                        >
-                          email
-                        </span>
+                        <Email/>
                       </InputAdornment>
                     ),
                   }}
@@ -135,12 +171,7 @@ function LoginForm() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <span
-                          className="material-icons"
-                          style={{ color: "#7f8c8d" }}
-                        >
-                          lock
-                        </span>
+                        <Lock/>
                       </InputAdornment>
                     ),
                     endAdornment: (
@@ -149,9 +180,7 @@ function LoginForm() {
                           onClick={togglePasswordVisibility}
                           edge="end"
                         >
-                          <span className="material-icons">
-                            {showPassword ? "visibility_off" : "visibility"}
-                          </span>
+                        {showPassword ? <VisibilityOff/> : <Visibility/>}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -187,6 +216,7 @@ function LoginForm() {
                     Don&apos;t have an account?{" "}
                     <Button
                       variant="text"
+                      onClick={() => setIsSignUp(true)}
                       sx={{
                         textTransform: "none",
                         fontWeight: 600,
@@ -199,6 +229,7 @@ function LoginForm() {
                 </Box>
               </Box>
             </Box>
+            )}
           </Grid>
 
           {/* Right Column - Illustration */}
