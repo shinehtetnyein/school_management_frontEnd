@@ -1,11 +1,13 @@
-import { AppBar, Toolbar, Typography, Box } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import RouteComponent from "./RouteComponent";
+import { ThemeProvider } from "./theme/context/ThemeContext";
 
 function App() {
   return (
-    <div>
+    <ThemeProvider>
+      <CssBaseline />
       <RouteComponent />
-    </div>
+    </ThemeProvider>
   );
 }
 

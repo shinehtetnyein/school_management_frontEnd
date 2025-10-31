@@ -1,5 +1,5 @@
 // components/layout/Header.jsx
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
 	AppBar,
 	Toolbar,
@@ -20,9 +20,14 @@ import {
 	AccountCircle,
 	Settings as SettingsIcon,
 	Logout as LogoutIcon,
+	Language as LanguageIcon,
+	Brightness4 as Brightness4Icon,
+	Brightness7 as Brightness7Icon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
+import { ThemeContext } from "../../theme/context/ThemeContext";
+import logo from "../../assets/logo-school.svg";
 import { InputBase } from "@mui/material";
 
 const drawerWidth = 280;
@@ -67,8 +72,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Header = ({ onMenuClick }) => {
 	const navigate = useNavigate();
+	const { isDarkMode, toggleTheme } = useContext(ThemeContext);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [notificationAnchor, setNotificationAnchor] = useState(null);
+	const [langEl, setLangEl] = useState(null);
+	const [language, setLanguage] = useState(() => localStorage.getItem("lang") || "en");
 
 	const handleProfileMenuOpen = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -84,6 +92,14 @@ const Header = ({ onMenuClick }) => {
 
 	const handleNotificationClose = () => {
 		setNotificationAnchor(null);
+	};
+
+	const handleLangOpen = (event) => setLangEl(event.currentTarget);
+	const handleLangClose = () => setLangEl(null);
+	const changeLanguage = (code) => {
+		setLanguage(code);
+		localStorage.setItem("lang", code);
+		handleLangClose();
 	};
 
 	const handleLogout = () => {
@@ -114,13 +130,16 @@ const Header = ({ onMenuClick }) => {
 						<MenuIcon />
 					</IconButton>
 
-					<Typography
-						variant='h6'
-						noWrap
-						component='div'
-						sx={{ display: { xs: "none", md: "block" } }}>
-						School Management System
-					</Typography>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+						<Box component="img" src={logo} alt="School logo" sx={{ width: 28, height: 28 }} />
+						<Typography
+							variant='h6'
+							noWrap
+							component='div'
+							sx={{ display: { xs: "none", md: "block" } }}>
+							School Management System
+						</Typography>
+					</Box>
 
 					<Search sx={{ flexGrow: 1, maxWidth: 400, mx: 3 }}>
 						<SearchIconWrapper>
@@ -133,28 +152,32 @@ const Header = ({ onMenuClick }) => {
 					</Search>
 
 					<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-						{/* Notifications */}
+						<IconButton color='inherit' onClick={handleLangOpen} aria-label='language'>
+							<LanguageIcon />
+						</IconButton>
+						<IconButton color='inherit' onClick={toggleTheme} aria-label='toggle theme'>
+							{isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+						</IconButton>
 						<IconButton
 							color='inherit'
 							onClick={handleNotificationOpen}
 							aria-label='notifications'>
-							<Badge
-								badgeContent={3}
-								color='error'>
+							<Badge badgeContent={3} color='error'>
 								<NotificationsIcon />
 							</Badge>
 						</IconButton>
-
-						{/* User Profile */}
-						<IconButton
-							onClick={handleProfileMenuOpen}
-							color='inherit'
-							aria-label='account'>
+						<IconButton onClick={handleProfileMenuOpen} color='inherit' aria-label='account'>
 							<Avatar sx={{ width: 32, height: 32 }}>A</Avatar>
 						</IconButton>
 					</Box>
 				</Toolbar>
 			</AppBar>
+
+			{/* Language Menu */}
+			<Menu anchorEl={langEl} open={Boolean(langEl)} onClose={handleLangClose}>
+				<MenuItem selected={language==='en'} onClick={() => changeLanguage('en')}>English</MenuItem>
+				<MenuItem selected={language==='mm'} onClick={() => changeLanguage('mm')}>မြန်မာ</MenuItem>
+			</Menu>
 
 			{/* User Profile Menu */}
 			<Menu

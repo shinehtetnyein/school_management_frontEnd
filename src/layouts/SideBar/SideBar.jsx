@@ -13,6 +13,8 @@ import {
   Divider,
   useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import logo from '../../assets/logo-school.svg';
 import {
   Dashboard as DashboardIcon,
   School as SchoolIcon,
@@ -56,9 +58,12 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
   const drawer = (
     <Box>
       <Toolbar>
-        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 'bold' }}>
-          School MS
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box component="img" src={logo} alt="School logo" sx={{ width: 28, height: 28 }} />
+          <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 'bold' }}>
+            School MS
+          </Typography>
+        </Box>
       </Toolbar>
       <Divider />
       <List>
@@ -69,19 +74,30 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
               to={item.path}
               selected={isActive(item.path, item.exact)}
               sx={{
+                mx: 1,
+                my: 0.5,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.06),
+                },
                 '&.Mui-selected': {
-                  backgroundColor: theme.palette.primary.light,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                  color: theme.palette.primary.main,
+                  '& .MuiListItemIcon-root': {
+                    color: theme.palette.primary.main,
+                  },
                   '&:hover': {
-                    backgroundColor: theme.palette.primary.light,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.16),
                   },
                 },
               }}
             >
               <ListItemIcon
                 sx={{
-                  color: isActive(item.path, item.exact) 
-                    ? theme.palette.primary.main 
+                  color: isActive(item.path, item.exact)
+                    ? theme.palette.primary.main
                     : 'inherit',
+                  minWidth: 40,
                 }}
               >
                 {item.icon}
