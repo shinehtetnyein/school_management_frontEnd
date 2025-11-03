@@ -1,8 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import DashboardLayout from "./layouts/DashboardLayout";
-import Students from "./AdminDashboard/Pages/Students";
-import Teachers from "./AdminDashboard/Pages/Teachers";
 import LoginForm from "./Components/LoginForm";
 import { ThemeProvider } from "./Theme/Context/ThemeContext";
 import Main from "./layouts/Main/Main";
