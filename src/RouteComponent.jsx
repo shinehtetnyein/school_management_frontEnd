@@ -1,27 +1,18 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Students from "./AdminDashboard/Pages/Students";
 import Teachers from "./AdminDashboard/Pages/Teachers";
 import LoginForm from "./Components/LoginForm";
 import SignUpForm from "./Components/SignUpForm";
 import Dashboard from "./AdminDashboard/Pages/Dashboard";
+import { ThemeProvider } from "./theme/context/ThemeContext";
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#1976d2",
-    },
-    secondary: {
-      main: "#dc004e",
-    },
-  },
-});
 const RouteComponent = () => {
   return (
-    <div>
-      <ThemeProvider theme={theme}>
+    <>
+      <ThemeProvider>
         <CssBaseline />
         <Router>
           <Routes>
@@ -35,7 +26,7 @@ const RouteComponent = () => {
           </Routes>
         </Router>
       </ThemeProvider>
-    </div>
+    </>
   );
 };
 
