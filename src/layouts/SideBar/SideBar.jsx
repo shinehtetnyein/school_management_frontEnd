@@ -200,8 +200,8 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
                     <ListItemText
                       primary={item.label}
                       primaryTypographyProps={{
-                        fontSize: "15px",
-                        fontWeight: active ? 600 : 500,
+                        fontSize: "16px",
+                        fontWeight: 400,
                         color: active ? "primary.secondary" : "text.primary", // Active color
                       }}
                     />
