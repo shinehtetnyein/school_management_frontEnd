@@ -1,5 +1,6 @@
 // src/components/LoginForm.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Card,
@@ -56,24 +57,21 @@ const newsItems = [
 
 function LoginForm() {
   const theme = useTheme();
+  const navigate = useNavigate();
   // States from your original file (but 'role' is removed)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-
-  // Simplified handleSubmit since 'role' is removed
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email && password) {
-      // ---
-      // NOTE: The 'role' logic was here.
-      // You will need to add your new login logic.
-      // e.g., navigate("/dashboard");
-      // ---
       setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
+      setTimeout(() => {
+        setShowSuccess(false);
+        navigate("/dashboard"); // Navigate to the dashboard
+      }, 1500); // Reduced timeout for a better user experience
     }
   };
 

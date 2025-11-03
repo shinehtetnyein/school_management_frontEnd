@@ -19,7 +19,8 @@ const RouteComponent = () => {
             <Route path="/login" element={<LoginForm />} />
             <Route path="/sign-up" element={<SignUpForm />} />
             <Route path="/" element={<DashboardLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
               <Route path="students" element={<Students />} />
               <Route path="teachers" element={<Teachers />} />
             </Route>
