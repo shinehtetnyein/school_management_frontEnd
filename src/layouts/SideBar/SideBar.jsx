@@ -1,4 +1,3 @@
-// components/layout/Sidebar.jsx
 import React from "react";
 import {
   Drawer,
@@ -26,7 +25,6 @@ import {
   Payment as PaymentIcon,
   Assessment as AssessmentIcon,
   Settings as SettingsIcon,
-  ChevronRight as ChevronRightIcon, // Import ChevronRight
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 
@@ -36,70 +34,26 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
   const theme = useTheme();
   const location = useLocation();
 
-  // 1. Restructured data to support groups
-  const menuGroups = [
+  const menuItems = [
     {
-      title: "Main",
-      items: [
-        {
-          path: "/dashboard",
-          icon: <DashboardIcon />,
-          label: "Dashboard",
-          exact: true,
-        },
-        {
-          path: "/dashboard/students",
-          icon: <SchoolIcon />,
-          label: "Students",
-          chevron: true,
-        },
-        {
-          path: "/dashboard/teachers",
-          icon: <PersonIcon />,
-          label: "Teachers",
-          chevron: true,
-        },
-        { path: "/dashboard/classes", icon: <ClassIcon />, label: "Classes" },
-        {
-          path: "/dashboard/subjects",
-          icon: <MenuBookIcon />,
-          label: "Subjects",
-        },
-      ],
+      path: "/dashboard",
+      icon: <DashboardIcon />,
+      label: "Dashboard",
+      exact: true,
     },
+    { path: "/dashboard/students", icon: <SchoolIcon />, label: "Students" },
+    { path: "/dashboard/teachers", icon: <PersonIcon />, label: "Teachers" },
+    { path: "/dashboard/classes", icon: <ClassIcon />, label: "Classes" },
+    { path: "/dashboard/subjects", icon: <MenuBookIcon />, label: "Subjects" },
     {
-      title: "Activities",
-      items: [
-        {
-          path: "/dashboard/attendance",
-          icon: <CheckCircleIcon />,
-          label: "Attendance",
-          chevron: true,
-        },
-        { path: "/dashboard/grades", icon: <GradeIcon />, label: "Grades" },
-        {
-          path: "/dashboard/fees",
-          icon: <PaymentIcon />,
-          label: "Fees",
-          chevron: true,
-        },
-      ],
+      path: "/dashboard/attendance",
+      icon: <CheckCircleIcon />,
+      label: "Attendance",
     },
-    {
-      title: "Administration",
-      items: [
-        {
-          path: "/dashboard/reports",
-          icon: <AssessmentIcon />,
-          label: "Reports",
-        },
-        {
-          path: "/dashboard/settings",
-          icon: <SettingsIcon />,
-          label: "Settings",
-        },
-      ],
-    },
+    { path: "/dashboard/grades", icon: <GradeIcon />, label: "Grades" },
+    { path: "/dashboard/fees", icon: <PaymentIcon />, label: "Fees" },
+    { path: "/dashboard/reports", icon: <AssessmentIcon />, label: "Reports" },
+    { path: "/dashboard/settings", icon: <SettingsIcon />, label: "Settings" },
   ];
 
   const isActive = (path, exact = false) => {
@@ -179,7 +133,7 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
       component="nav"
       sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
     >
-      {/* Mobile drawer (no changes) */}
+      {/* Mobile drawer */}
       <Drawer
         variant="temporary"
         open={mobileOpen}
@@ -193,7 +147,7 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
         {drawer}
       </Drawer>
 
-      {/* Desktop drawer (no changes) */}
+      {/* Desktop drawer */}
       <Drawer
         variant="permanent"
         sx={{

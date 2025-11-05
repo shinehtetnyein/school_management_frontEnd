@@ -1,4 +1,3 @@
-import { ThemeProvider } from "../../Theme/Context/ThemeContext";
 import { Box, useTheme, useMediaQuery, Grid } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Topbar from "./components/Topbar/Topbar";

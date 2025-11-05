@@ -1,489 +1,362 @@
-// src/components/LoginForm.jsx
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
   TextField,
   Button,
   Typography,
+  Container,
   Grid,
   InputAdornment,
   IconButton,
-  Alert,
-  Divider,
-  Checkbox,
-  FormControlLabel,
-  List,
-  ListItem,
-  ListItemText,
-  Avatar, // For Logo
   useTheme,
+  Fade,
+  MenuItem,
+  Snackbar,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
+import {
+  School,
+  Lock,
+  Person,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
+import { useNavigate, useLocation } from "react-router-dom";
+import Configuration from "../services/configuration";
+import DataServices from "../services/data-services";
+import { useAuth } from "../contexts/AuthContext";
 
-// --- Icons to match the new image ---
-import LockOutlined from "@mui/icons-material/LockOutlined";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import EmailOutlined from "@mui/icons-material/EmailOutlined";
-import Facebook from "@mui/icons-material/Facebook";
-import Google from "@mui/icons-material/Google";
-import Apple from "@mui/icons-material/Apple";
-import ChevronRight from "@mui/icons-material/ChevronRight";
-import School from "@mui/icons-material/School"; // Placeholder for 'P' logo
-import SignUpForm from "./SignUpForm";
-
-// Dummy data for the "What's New" section
-const newsItems = [
-  {
-    title: "Summer Vacation Holiday Homework",
-    subtitle: "The school will remain closed from April 20th to June...",
-  },
-  {
-    title: "New Academic Session Admission Start(2024-25)",
-    subtitle: "An academic term is a portion of an academic year, the time ...",
-  },
-  {
-    title: "Date sheet Final Exam Nursery to Sr.Kg",
-    subtitle:
-      "Dear Parents, As the final examination for the session 2024-25 is ...",
-  },
-  {
-    title: "Annual Day Function",
-    subtitle:
-      "Annual functions provide a platform for students to showcase their...",
-  },
-];
-
-function LoginForm() {
+const LoginForm = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  // States from your original file (but 'role' is removed)
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    role: "student",
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (email && password) {
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        navigate("/dashboard"); // Navigate to the dashboard
-      }, 1500); // Reduced timeout for a better user experience
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const config = new Configuration();
+  const dataServices = new DataServices();
+
+  const roles = [
+    { value: "teacher", label: "Teacher" },
+    { value: "student", label: "Student" },
+    { value: "parent", label: "Parent" },
+    { value: "librarian", label: "Librarian" },
+    { value: "accountant", label: "Accountant" },
+    { value: "admin", label: "Admin" },
+  ];
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated()) {
+      const from = location.state?.from?.pathname || "/dashboard";
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
+
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") return;
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const showSnackbar = (message, severity = "success") => {
+    setSnackbar({
+      open: true,
+      message,
+      severity,
+    });
+  };
+
+  const handleInputChange = (field) => (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: event.target.value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const { email, password, role } = formData;
+
+    if (!email || !password || !role) {
+      showSnackbar("Please fill in all fields and select a role.", "error");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await dataServices.authorize(
+        { email, password, role },
+        config.SERVICE_NAME + config.SERVICE_ACTION_LOGIN
+      );
+
+      if (response.data?.token) {
+        const { user, token } = response.data;
+
+        // Use auth context to login
+        login(user, token);
+
+        showSnackbar("Login successful! Redirecting...", "success");
+
+        // Navigate to intended page or dashboard
+        const from = location.state?.from?.pathname || "/dashboard";
+        setTimeout(() => {
+          navigate(from, { replace: true });
+        }, 1000);
+      } else {
+        showSnackbar(
+          response?.message || "Invalid credentials or role.",
+          "error"
+        );
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+
+      let errorMsg = "Something went wrong. Please try again.";
+
+      if (error.response?.status === 422) {
+        // Handle validation errors
+        const errors = error.response.data?.errors;
+        if (errors) {
+          errorMsg = Object.values(errors).flat().join(" ");
+        } else {
+          errorMsg = error.response.data?.message || "Validation failed";
+        }
+      } else if (error.response?.status === 401) {
+        errorMsg = "Invalid email or password";
+      } else if (error.response?.status === 403) {
+        errorMsg = "You are not authorized for this role";
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error.request) {
+        errorMsg = "Network error. Please check your connection.";
+      }
+
+      showSnackbar(errorMsg, "error");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
+  // Don't render if already authenticated (will redirect)
+  if (isAuthenticated()) {
+    return null;
+  }
 
   return (
-    <Box
+    <Container
+      maxWidth="100%"
       sx={{
-        maxHeight: "100vh",
-        overflow: "hidden",
+        minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: theme.palette.background.default, // Light gray background for the page
+        background: theme.palette.custom.activeGradient,
+        py: 4,
       }}
     >
-      <Grid container sx={{ width: "100%" }}>
-        {/* Left Column - "What's New" */}
-        <Grid
-          size={{ xs: 12, md: 6 }}
+      <Fade in={true} timeout={800}>
+        <Card
+          elevation={16}
           sx={{
-            p: 4,
-            display: { xs: "none", md: "flex" }, // Hide on small screens
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            // Placeholder background image
-            backgroundImage:
-              "url(https://plus.unsplash.com/premium_photo-1661883964924-81e5c36f32ac?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            position: "relative",
-            "&::before": {
-              // This creates the blue tint overlay
-              content: '""',
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: theme.palette.custom.activeGradient, // Blue overlay
-              zIndex: 1,
-            },
+            borderRadius: 4,
+            overflow: "hidden",
+            minHeight: "600px",
+            width: "100%",
+            maxWidth: "1000px",
+            background: theme.palette.background.default,
+            backdropFilter: "blur(10px)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
           }}
         >
-          <Box
-            sx={{
-              position: "relative",
-              zIndex: 2,
-              width: "100%",
-              p: 3,
-              borderRadius: 3,
-              backgroundColor: "rgba(255, 255, 255, 0.2)", // Transparent white panel
-              backdropFilter: "blur(10px)", // Frosted glass effect
-            }}
-          >
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: 700, color: "white", mb: 3 }}
-            >
-              What's New on Preskool !!!
-            </Typography>
-            <List sx={{ p: 0 }}>
-              {newsItems.map((item, index) => (
-                <ListItem
-                  key={index}
-                  sx={{
-                    backgroundColor: "rgba(255, 255, 255, 0.9)", // Solid white item background
-                    borderRadius: 2,
-                    mb: 1.5,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  }}
-                  secondaryAction={
-                    <IconButton edge="end" sx={{ color: "primary.main" }}>
-                      <ChevronRight />
-                    </IconButton>
-                  }
-                >
-                  <ListItemText
-                    primary={
-                      <Typography
-                        variant="body1"
-                        sx={{ fontWeight: 600, color: "#333" }}
-                      >
-                        {item.title}
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#555",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {item.subtitle}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Grid>
-
-        {/* Right Column - Login Form */}
-        <Grid
-          size={{ xs: 12, md: 6 }}
-          sx={{
-            p: { xs: 3, sm: 4, md: 6 },
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            backgroundColor: "white",
-          }}
-        >
-          {isSignUp ? (
-            <SignUpForm onSwitchToLogin={() => setIsSignUp(false)} />
-          ) : (
-            <Box
+          <Grid container sx={{ minHeight: "600px" }}>
+            {/* Left Illustration */}
+            <Grid
+              item
+              xs={12}
+              md={6}
               sx={{
-                mx: "auto",
-                width: "100%",
+                background: theme.palette.custom.activeGradient,
+                display: { xs: "none", md: "flex" },
+                alignItems: "center",
+                justifyContent: "center",
+                p: 4,
+              }}
+            >
+              <Box sx={{ textAlign: "center", color: "white", zIndex: 2 }}>
+                <School sx={{ fontSize: 80, mb: 2 }} />
+                <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
+                  Campus Portal
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ opacity: 0.9, maxWidth: 300, mx: "auto", mb: 4 }}
+                >
+                  Access your academic records, course materials, and campus
+                  resources
+                </Typography>
+              </Box>
+            </Grid>
+
+            {/* Right Login Form */}
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                p: { xs: 4, md: 6 },
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
+                background: theme.palette.background.default,
               }}
             >
-              <Box
-                sx={{
-                  flexGrow: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                {/* Logo Placeholder */}
-                <Box sx={{ textAlign: "center", mb: 2 }}>
-                  <Avatar
+              <Box sx={{ maxWidth: 400, mx: "auto", width: "100%" }}>
+                <Box sx={{ textAlign: "center", mb: 4 }}>
+                  <School
                     sx={{
-                      bgcolor: "#3f51b5",
-                      mx: "auto",
-                      width: 48,
-                      height: 48,
+                      fontSize: 48,
+                      color: theme.palette.primary.secondary,
+                      mb: 1,
+                    }}
+                  />
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      fontWeight: 700,
+                      color: theme.palette.primary.secondary,
+                      mb: 1,
                     }}
                   >
-                    <School /> {/* Placeholder Icon */}
-                  </Avatar>
+                    Login
+                  </Typography>
                   <Typography
-                    variant="h5"
-                    sx={{ fontWeight: 700, color: "#333", mt: 1 }}
+                    variant="subtitle1"
+                    sx={{ color: theme.palette.secondary.gray }}
                   >
-                    PreSkool
+                    Sign in to your account
                   </Typography>
                 </Box>
-                <Card
-                  sx={{
-                    // MODIFIED: Padding increased and shadow/border changed
-                    p: { xs: 3, md: 4 }, // Increased padding
-                    borderRadius: "8px",
-                    border: `1px solid ${theme.palette.divider}`, // Alternative: Use border if you want
-                    width: "70%",
-                    mx: "auto",
-                  }}
-                >
-                  <Typography
-                    variant="h2"
-                    sx={{
-                      color: theme.palette.text.primary,
-                      mb: 1,
-                      // MODIFIED: Removed textAlign: "center"
+
+                <Box component="form" onSubmit={handleSubmit} noValidate>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    value={formData.email}
+                    onChange={handleInputChange("email")}
+                    margin="normal"
+                    required
+                    disabled={loading}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Person />
+                        </InputAdornment>
+                      ),
                     }}
-                  >
-                    Welcome
-                  </Typography>
+                  />
 
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      color: theme.palette.text.secondary,
-                      mb: 3,
-                      // MODIFIED: Removed textAlign: "center"
+                  <TextField
+                    fullWidth
+                    select
+                    label="Select Role"
+                    value={formData.role}
+                    onChange={handleInputChange("role")}
+                    margin="normal"
+                    required
+                    disabled={loading}
+                  >
+                    {roles.map((r) => (
+                      <MenuItem key={r.value} value={r.value}>
+                        {r.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={handleInputChange("password")}
+                    margin="normal"
+                    required
+                    disabled={loading}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Lock />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={togglePasswordVisibility}
+                            edge="end"
+                            disabled={loading}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
                     }}
+                  />
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    disabled={loading}
+                    sx={{ mt: 2, height: "48px" }}
                   >
-                    Please enter your details to sign in
-                  </Typography>
-
-                  {/* Social Logins */}
-                  <Grid container spacing={2} sx={{ mb: 2 }}>
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        startIcon={<Facebook sx={{ fontSize: "20px" }} />}
-                        sx={{
-                          height: "50px",
-                          width: "100%",
-                          borderRadius: "8px",
-                          backgroundColor: theme.palette.background.button,
-                          textTransform: "none",
-                          "&:hover": {
-                            backgroundColor:
-                              theme.palette.background.buttonHover,
-                          },
-                        }}
-                      >
-                        {/* MODIFIED: Removed text "Facebook" */}
-                      </Button>
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                      <Button
-                        fullWidth
-                        variant="outlined"
-                        startIcon={<Google sx={{ fontSize: "20px" }} />}
-                        sx={{
-                          height: "50px",
-                          width: "100%",
-                          textTransform: "none",
-                          color: theme.palette.action.icon,
-                          borderColor: theme.palette.action.borderColor,
-                          "&:hover": {
-                            borderColor: theme.palette.action.borderHover,
-                          },
-                        }}
-                      >
-                        {/* MODIFIED: Removed text "Google" */}
-                      </Button>
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        startIcon={<Apple sx={{ fontSize: "20px" }} />}
-                        sx={{
-                          height: "50px",
-                          width: "100%",
-                          backgroundColor: theme.palette.background.primary,
-                          textTransform: "none",
-                          "&:hover": {
-                            backgroundColor: theme.palette.background.hover,
-                          },
-                        }}
-                      >
-                        {/* MODIFIED: Removed text "Apple" */}
-                      </Button>
-                    </Grid>
-                  </Grid>
-
-                  <Divider sx={{ my: 2 }}>Or</Divider>
-
-                  {showSuccess && (
-                    <Alert
-                      severity="success"
-                      sx={{ mb: 3 }}
-                      onClose={() => setShowSuccess(false)}
-                    >
-                      Login successful! Welcome back.
-                    </Alert>
-                  )}
-
-                  <Box component="form" onSubmit={handleSubmit}>
-                    <Typography
-                      variant="body1"
-                      sx={{ color: theme.palette.text.primary }}
-                    >
-                      Email Address
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      margin="dense"
-                      required
-                      size="small"
-                      sx={{ mb: 2 }}
-                      InputProps={{
-                        // MODIFIED: Icon moved from startAdornment...
-                        // ...to endAdornment
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <EmailOutlined
-                              sx={{ color: theme.palette.action.icon }}
-                            />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-
-                    <Typography
-                      variant="body1"
-                      sx={{ color: theme.palette.text.primary }}
-                    >
-                      Password
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      margin="dense"
-                      required
-                      size="small"
-                      sx={{ mb: 1 }}
-                      InputProps={{
-                        // MODIFIED: Removed startAdornment (the lock icon)
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={togglePasswordVisibility}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff
-                                  sx={{ color: theme.palette.action.icon }}
-                                />
-                              ) : (
-                                <Visibility
-                                  sx={{ color: theme.palette.action.icon }}
-                                />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        mb: 2,
-                      }}
-                    >
-                      <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember Me"
-                      />
-                      <Button
-                        variant="text"
-                        sx={{
-                          textTransform: "none",
-                          fontWeight: 600,
-                          color: theme.palette.secondary.heart, // Red color for forgot password
-                          "&:hover": { backgroundColor: "transparent" },
-                        }}
-                      >
-                        Forgot Password?
-                      </Button>
-                    </Box>
-
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        py: 1.2,
-                        backgroundColor: theme.palette.background.button, // Solid blue color
-                        borderRadius: 2,
-                        textTransform: "none",
-                        fontWeight: 600,
-                        "&:hover": {
-                          backgroundColor: theme.palette.background.buttonHover,
-                        },
-                      }}
-                    >
-                      Sign In
-                    </Button>
-
-                    <Box sx={{ mt: 3, textAlign: "center" }}>
-                      <Typography
-                        variant="body1"
-                        sx={{ color: theme.palette.text.secondary }}
-                      >
-                        Don&apos;t have an account?{" "}
-                        <Button
-                          variant="text"
-                          onClick={() => setIsSignUp(true)}
-                          sx={{
-                            textTransform: "none",
-                            fontWeight: 600,
-                            color: theme.palette.text.first, // Blue link
-                          }}
-                        >
-                          Create Account
-                        </Button>
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Card>
+                    {loading ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          )}
-          {/* Copyright Footer */}
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            align="center"
-            sx={{ mt: isSignUp ? 8 : 4 }}
-          >
-            Copyright © 2025 - Preskool
-          </Typography>
-        </Grid>
-      </Grid>
-    </Box>
+            </Grid>
+          </Grid>
+        </Card>
+      </Fade>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Container>
   );
-}
+};
 
 export default LoginForm;

@@ -1,33 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { CssBaseline } from "@mui/material";
-import DashboardLayout from "./layouts/DashboardLayout";
-import Students from "./AdminDashboard/Pages/Students";
-import Teachers from "./AdminDashboard/Pages/Teachers";
 import LoginForm from "./Components/LoginForm";
-import SignUpForm from "./Components/SignUpForm";
-import Dashboard from "./AdminDashboard/Pages/Dashboard";
 import { ThemeProvider } from "./theme/context/ThemeContext";
+import Main from "./layouts/Main/Main";
+import Dashboard from "./Components/AdminDashboard/Dashboard";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const RouteComponent = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   return (
-    <>
+    <div>
       <ThemeProvider>
-        <CssBaseline />
-        <Router>
-          <Routes>
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/sign-up" element={<SignUpForm />} />
-            <Route path="/" element={<DashboardLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="students" element={<Students />} />
-              <Route path="teachers" element={<Teachers />} />
-            </Route>
-          </Routes>
-        </Router>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<LoginForm />}></Route>
+              <Route path="/login" element={<LoginForm />} />
+              <Route
+                path="/"
+                element={
+                  <Main
+                    toggleSidebar={toggleSidebar}
+                    isSidebarCollapsed={isSidebarCollapsed}
+                  />
+                }
+              >
+                <Route index element={<LoginForm />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Route>
+            </Routes>
+          </Router>
+        </AuthProvider>
       </ThemeProvider>
-    </>
+    </div>
   );
 };
 
