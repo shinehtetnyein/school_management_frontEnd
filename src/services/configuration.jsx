@@ -10,8 +10,13 @@ class Configuration {
   SERVICE_NAME = "v1/";
   COOKIE_REFRESH_TOKEN = "refresh";
 
+  // login & logout
   SERVICE_ACTION_LOGIN = "login";
   SERVICE_ACTION_LOGOUT = "logout";
+
+  // course & subject
+  SERVICE_ACTION_COURSES_LIST = "course";
+  SERVICE_ACTION_SUBJECTS_LIST = "subject";
 }
 
 export default Configuration;

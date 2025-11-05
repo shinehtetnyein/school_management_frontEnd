@@ -30,7 +30,7 @@ const RouteComponent = () => {
                   />
                 }
               >
-                <Route index element={<Dashboard />} />
+                <Route index element={<LoginForm />} />
                 <Route path="/dashboard" element={<Dashboard />} />
               </Route>
             </Routes>
