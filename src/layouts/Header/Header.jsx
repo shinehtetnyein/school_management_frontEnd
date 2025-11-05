@@ -1,5 +1,5 @@
 // components/layout/Header.jsx
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   AppBar,
   Toolbar,
@@ -18,27 +18,32 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  Menu as MenuIcon,
-  Notifications as NotificationsIcon,
-  AccountCircle,
-  Settings as SettingsIcon,
-  Logout as LogoutIcon,
-  CalendarToday as CalendarTodayIcon,
-  Flag as FlagIcon,
-  DarkModeOutlined as DarkModeOutlinedIcon,
-  Fullscreen as FullscreenIcon,
-  FilterList as FilterListIcon,
+	Menu as MenuIcon,
+	Search as SearchIcon,
+	Notifications as NotificationsIcon,
+	AccountCircle,
+	Settings as SettingsIcon,
+	Logout as LogoutIcon,
+	Language as LanguageIcon,
+	Brightness4 as Brightness4Icon,
+	Brightness7 as Brightness7Icon,
 } from "@mui/icons-material";
 import MessageIcon from "@mui/icons-material/Message";
 import { useNavigate } from "react-router-dom";
+import { styled, alpha } from "@mui/material/styles";
+import { ThemeContext } from "../../theme/context/ThemeContext";
+import logo from "../../assets/logo-school.svg";
+import { InputBase } from "@mui/material";
 
 const drawerWidth = 280;
 
 const Header = ({ onMenuClick }) => {
-  const navigate = useNavigate();
-  const theme = useTheme();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [notificationAnchor, setNotificationAnchor] = useState(null);
+	const navigate = useNavigate();
+	const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [notificationAnchor, setNotificationAnchor] = useState(null);
+	const [langEl, setLangEl] = useState(null);
+	const [language, setLanguage] = useState(() => localStorage.getItem("lang") || "en");
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -52,9 +57,17 @@ const Header = ({ onMenuClick }) => {
     setNotificationAnchor(event.currentTarget);
   };
 
-  const handleNotificationClose = () => {
-    setNotificationAnchor(null);
-  };
+	const handleNotificationClose = () => {
+		setNotificationAnchor(null);
+	};
+
+	const handleLangOpen = (event) => setLangEl(event.currentTarget);
+	const handleLangClose = () => setLangEl(null);
+	const changeLanguage = (code) => {
+		setLanguage(code);
+		localStorage.setItem("lang", code);
+		handleLangClose();
+	};
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -93,154 +106,54 @@ const Header = ({ onMenuClick }) => {
               <MenuIcon />
             </IconButton>
 
-            {/* Search Bar */}
-            <TextField
-              variant="outlined"
-              placeholder="Search"
-              size="small"
-              sx={{
-                width: { xs: 180, md: 300 },
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                  height: "40px",
-                  backgroundColor: theme.palette.background.default,
-                  "& fieldset": {
-                    border: `1px solid ${theme.palette.divider}`,
-                  },
-                },
-                // CHANGED: Style the placeholder
-                "& .MuiInputBase-input::placeholder": {
-                  fontSize: "14px",
-                  color: "text.secondary",
-                  opacity: 1,
-                },
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton size="small" edge="end">
-                      <FilterListIcon
-                        sx={{ color: theme.palette.action.icon }}
-                      />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                // CHANGED: Style the actual input text
-                style: { fontSize: "14px" },
-              }}
-            />
-          </Box>
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+						<Box component="img" src={logo} alt="School logo" sx={{ width: 28, height: 28 }} />
+						<Typography
+							variant='h6'
+							noWrap
+							component='div'
+							sx={{ display: { xs: "none", md: "block" } }}>
+							School Management System
+						</Typography>
+					</Box>
 
-          {/* RIGHT SIDE */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: { xs: 0, md: 1.5 },
-            }}
-          >
-            {/* Academic Year Button */}
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={
-                <CalendarTodayIcon
-                  fontSize="small"
-                  sx={{ color: theme.palette.action.icon }}
-                />
-              }
-              sx={{
-                height: "40px",
-                display: { xs: "none", md: "flex" },
-                textTransform: "none",
-                border: `1px solid ${theme.palette.divider}`,
-                color: theme.palette.text.primary,
-                borderRadius: "8px",
-                mr: 1,
-                fontSize: "16px", // CHANGED: Set explicit font size
-              }}
-            >
-              Academic Year : 2024 / 2025
-            </Button>
+					<Search sx={{ flexGrow: 1, maxWidth: 400, mx: 3 }}>
+						<SearchIconWrapper>
+							<SearchIcon />
+						</SearchIconWrapper>
+						<StyledInputBase
+							placeholder='Search students, teachers, classes...'
+							inputProps={{ "aria-label": "search" }}
+						/>
+					</Search>
 
-            {/* Icon Buttons */}
-            <IconButton
-              sx={{
-                display: { xs: "none", md: "flex" },
-                color: theme.palette.action.icon,
-                border: `1px solid ${theme.palette.divider}`,
-                borderRadius: "8px",
-              }}
-            >
-              <FlagIcon />
-            </IconButton>
-            <IconButton
-              sx={{
-                display: { xs: "none", md: "flex" },
-                color: theme.palette.action.icon,
-                border: `1px solid ${theme.palette.divider}`,
-                borderRadius: "8px",
-              }}
-            >
-              <DarkModeOutlinedIcon />
-            </IconButton>
+					<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+						<IconButton color='inherit' onClick={handleLangOpen} aria-label='language'>
+							<LanguageIcon />
+						</IconButton>
+						<IconButton color='inherit' onClick={toggleTheme} aria-label='toggle theme'>
+							{isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+						</IconButton>
+						<IconButton
+							color='inherit'
+							onClick={handleNotificationOpen}
+							aria-label='notifications'>
+							<Badge badgeContent={3} color='error'>
+								<NotificationsIcon />
+							</Badge>
+						</IconButton>
+						<IconButton onClick={handleProfileMenuOpen} color='inherit' aria-label='account'>
+							<Avatar sx={{ width: 32, height: 32 }}>A</Avatar>
+						</IconButton>
+					</Box>
+				</Toolbar>
+			</AppBar>
 
-            {/* Notifications */}
-            <IconButton
-              onClick={handleNotificationOpen}
-              aria-label="notifications"
-              sx={{
-                border: `1px solid ${theme.palette.divider}`,
-                borderRadius: "8px",
-              }}
-            >
-              <Badge variant="dot" color="error">
-                <NotificationsIcon
-                  sx={{
-                    color: theme.palette.action.icon,
-                  }}
-                />
-              </Badge>
-            </IconButton>
-
-            <IconButton
-              sx={{
-                display: { xs: "none", md: "flex" },
-                color: theme.palette.action.icon,
-                border: `1px solid ${theme.palette.divider}`,
-                borderRadius: "8px",
-              }}
-            >
-              <MessageIcon />
-            </IconButton>
-
-            <IconButton
-              sx={{
-                display: { xs: "none", md: "flex" },
-                color: theme.palette.action.icon,
-                border: `1px solid ${theme.palette.divider}`,
-                borderRadius: "8px",
-              }}
-            >
-              <FullscreenIcon />
-            </IconButton>
-
-            {/* User Profile */}
-            <IconButton
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-              aria-label="account"
-              sx={{ ml: { xs: 0, md: 1 } }}
-            >
-              <Avatar
-                variant="rounded"
-                sx={{ width: 40, height: 40 }}
-                alt="User"
-              />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
+			{/* Language Menu */}
+			<Menu anchorEl={langEl} open={Boolean(langEl)} onClose={handleLangClose}>
+				<MenuItem selected={language==='en'} onClick={() => changeLanguage('en')}>English</MenuItem>
+				<MenuItem selected={language==='mm'} onClick={() => changeLanguage('mm')}>မြန်မာ</MenuItem>
+			</Menu>
 
       {/* User Profile Menu */}
       <Menu

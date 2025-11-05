@@ -12,8 +12,9 @@ import {
   Toolbar,
   Divider,
   useTheme,
-  ListSubheader, // Import ListSubheader
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import logo from "../../assets/logo-school.svg";
 import {
   Dashboard as DashboardIcon,
   School as SchoolIcon,
@@ -110,112 +111,64 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
 
   const drawer = (
     <Box>
-      {/* 2. Updated Toolbar to match image header */}
-      <Toolbar sx={{ py: 1.5, display: "flex", alignItems: "center" }}>
-        <SchoolIcon
-          sx={{
-            color: "primary.first",
-            fontSize: "2.2rem",
-            mr: 1.5,
-            p: 0.5,
-            borderRadius: "4px",
-          }}
-        />
-        <Typography
-          variant="h6"
-          noWrap
-          component="div"
-          sx={{ color: theme.palette.text.primary }}
-        >
-          PreSkool
-        </Typography>
+      <Toolbar>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box
+            component="img"
+            src={logo}
+            alt="School logo"
+            sx={{ width: 28, height: 28 }}
+          />
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ fontWeight: "bold" }}
+          >
+            School MS
+          </Typography>
+        </Box>
       </Toolbar>
       <Divider />
-
-      {/* 3. Updated List rendering logic */}
-      <List sx={{ pt: 1.5, px: 1 }}>
-        {menuGroups.map((group) => (
-          // Use React.Fragment for each group
-          <React.Fragment key={group.title}>
-            {/* 4. Render ListSubheader for the group title */}
-            <ListSubheader
-              component="div"
+      <List>
+        {menuItems.map((item) => (
+          <ListItem key={item.path} disablePadding>
+            <ListItemButton
+              component={Link}
+              to={item.path}
+              selected={isActive(item.path, item.exact)}
               sx={{
-                textTransform: "uppercase",
-                color: "text.primary",
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                lineHeight: "normal",
-                mb: 1,
-                mt: 1,
-                pl: 1.5,
-                backgroundColor: "transparent", // Ensure it has no background
+                mx: 1,
+                my: 0.5,
+                borderRadius: 2,
+                "&:hover": {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.06),
+                },
+                "&.Mui-selected": {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                  color: theme.palette.primary.main,
+                  "& .MuiListItemIcon-root": {
+                    color: theme.palette.primary.main,
+                  },
+                  "&:hover": {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.16),
+                  },
+                },
               }}
             >
-              {group.title}
-            </ListSubheader>
-
-            {/* Render items for the group */}
-            {group.items.map((item) => {
-              const active = isActive(item.path, item.exact);
-              return (
-                <ListItem
-                  key={item.path}
-                  disablePadding
-                  sx={{ display: "block" }}
-                >
-                  <ListItemButton
-                    component={Link}
-                    to={item.path}
-                    selected={active}
-                    // 5. Updated styling (sx) for items
-                    sx={{
-                      py: 0.75, // Adjust padding
-                      px: 1.5,
-                      mb: 0.5,
-                      borderRadius: "4px", // Add slight rounding
-
-                      // Style for selected items
-                      "&.Mui-selected": {
-                        backgroundColor: theme.palette.action.selected, // Use a subtle gray
-                        "&:hover": {
-                          backgroundColor: theme.palette.action.hover,
-                        },
-                      },
-                      "&:hover": {
-                        backgroundColor: theme.palette.action.hover,
-                      },
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: 2, // Margin between icon and text
-                        justifyContent: "center",
-                        color: active ? "primary.secondary" : "text.secondary", // Active color
-                      }}
-                    >
-                      {item.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={item.label}
-                      primaryTypographyProps={{
-                        fontSize: "16px",
-                        fontWeight: 400,
-                        color: active ? "primary.secondary" : "text.primary", // Active color
-                      }}
-                    />
-                    {/* 6. Conditionally render Chevron icon */}
-                    {item.chevron && (
-                      <ChevronRightIcon
-                        sx={{ color: "text.secondary", fontSize: "1.2rem" }}
-                      />
-                    )}
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
-          </React.Fragment>
+              <ListItemIcon
+                sx={{
+                  color: isActive(item.path, item.exact)
+                    ? theme.palette.primary.main
+                    : "inherit",
+                  minWidth: 40,
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
         ))}
       </List>
     </Box>
