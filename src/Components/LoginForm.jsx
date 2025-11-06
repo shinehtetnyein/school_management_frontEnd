@@ -189,9 +189,7 @@ const LoginForm = () => {
           <Grid container sx={{ minHeight: "600px" }}>
             {/* Left Illustration */}
             <Grid
-              item
-              xs={12}
-              md={6}
+              size={{ xs: 12, md: 6 }}
               sx={{
                 background: theme.palette.custom.activeGradient,
                 display: { xs: "none", md: "flex" },
@@ -217,9 +215,7 @@ const LoginForm = () => {
 
             {/* Right Login Form */}
             <Grid
-              item
-              xs={12}
-              md={6}
+              size={{ xs: 12, md: 6 }}
               sx={{
                 p: { xs: 4, md: 6 },
                 display: "flex",
