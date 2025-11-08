@@ -5,40 +5,40 @@ const commonThemeProperties = {
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     h6: {
-      fontWeight: 600,
-      fontSize: "16px",
-    },
-    h5: {
-      fontWeight: 600,
+      fontWeight: 700,
       fontSize: "18px",
     },
-    h4: {
-      fontWeight: 600,
+    h5: {
+      fontWeight: 700,
       fontSize: "20px",
     },
-    h3: {
-      fontWeight: 600,
+    h4: {
+      fontWeight: 700,
       fontSize: "22px",
     },
-    h2: {
-      fontWeight: 600,
+    h3: {
+      fontWeight: 700,
       fontSize: "24px",
     },
+    h2: {
+      fontWeight: 700,
+      fontSize: "28px",
+    },
     h1: {
-      fontWeight: 600,
-      fontSize: "26px",
+      fontWeight: 700,
+      fontSize: "32px",
     },
     body1: {
       fontWeight: 500,
-      fontSize: "15px",
+      fontSize: "16px",
     },
     body2: {
       fontWeight: 500,
-      fontSize: "14px",
+      fontSize: "15px",
     },
     body3: {
       fontWeight: 500,
-      fontSize: "13px",
+      fontSize: "14px",
     },
     caption: {
       fontWeight: 400,
@@ -54,6 +54,10 @@ const commonThemeProperties = {
 export const lightTheme = createTheme({
   ...commonThemeProperties,
   palette: {
+    common: {
+      black: "#000",
+      white: "#fff",
+    },
     mode: "light",
     primary: {
       main: "#0A10C2", // Facebook-like blue
@@ -68,22 +72,29 @@ export const lightTheme = createTheme({
       gray: "#4E5159",
     },
     background: {
+      hover: "#333",
       default: "#ffffff",
       paper: "#ffffff",
       secondary: "#f0f2f5",
       primary: "#000", // Dark background
       main: "#E8E9EC",
       back: "#FDB812", // Yellow
+      button: "#3f51b5",
+      buttonHover: "#303f9f",
     },
     text: {
       primary: "#050505", // Dark text
       secondary: "#65676B", // Gray text
       main: "#AAADBA", // Light gray
+      first: "#3f51b5",
     },
     action: {
+      borderColor: "#ccc",
+      borderHover: "#888",
       active: "#0A10C2", // Active blue color
       hover: "#f0f2f5", // Light gray hover
       selected: "#f0f2f5", // Light gray for focused states
+      icon: "#555",
     },
     custom: {
       placeholderText: "rgba(148, 148, 148, 1)", // Placeholder text color
@@ -105,6 +116,10 @@ export const lightTheme = createTheme({
 export const darkTheme = createTheme({
   ...commonThemeProperties,
   palette: {
+    common: {
+      black: "#000",
+      white: "#fff",
+    },
     mode: "dark",
     primary: {
       main: "#0A10C2", // Facebook-like blue
@@ -135,6 +150,7 @@ export const darkTheme = createTheme({
       active: "#2d88ff", // Active blue color
       hover: "#4E5159", // Dark hover
       selected: "#4E5159",
+      icon: "#b0b3b8",
     },
     custom: {
       placeholderText: "rgba(148, 148, 148, 1)", // Placeholder text color

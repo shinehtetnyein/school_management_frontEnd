@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginForm from "./Components/LoginForm";
-import { ThemeProvider } from "./Theme/Context/ThemeContext";
-import Main from "./layouts/Main/Main";
+import { ThemeProvider } from "./theme/context/ThemeContext";
+import Main from "./layouts/main/Main";
 import Dashboard from "./Components/AdminDashboard/Dashboard";
 import { AuthProvider } from "./contexts/AuthContext";
+import StudentList from "./Components/Student/StudentList";
 
 const RouteComponent = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -32,6 +33,7 @@ const RouteComponent = () => {
               >
                 <Route element={<LoginForm />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard/students" element={<StudentList />} />
               </Route>
             </Routes>
           </Router>
