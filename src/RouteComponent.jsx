@@ -19,7 +19,7 @@ const RouteComponent = () => {
         <AuthProvider>
           <Router>
             <Routes>
-              <Route path="/" element={<LoginForm />}></Route>
+              <Route path="/" index element={<LoginForm />}></Route>
               <Route path="/login" element={<LoginForm />} />
               <Route
                 path="/"
@@ -30,7 +30,7 @@ const RouteComponent = () => {
                   />
                 }
               >
-                <Route index element={<LoginForm />} />
+                <Route element={<LoginForm />} />
                 <Route path="/dashboard" element={<Dashboard />} />
               </Route>
             </Routes>
