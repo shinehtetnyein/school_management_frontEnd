@@ -37,6 +37,7 @@ import {
 } from "@mui/icons-material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { visuallyHidden } from "@mui/utils";
+import CollectFeesModal from "./CollectFeesModal";
 
 // --- Mock Data ---
 // (Same as before, but I've added a unique 'id' for sorting)
@@ -227,7 +228,21 @@ const StudentList = () => {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10); // Matches your image's default
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
+  // --- Handlers for Collect Fees Modal ---
+  const handleOpenModal = (student) => {
+    setSelectedStudent(student);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedStudent(null); // Clear student on close
+  };
+
+  // --- Handlers for Table ---
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -292,6 +307,7 @@ const StudentList = () => {
   // --- State and handlers for Export Menu ---
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
   const handleExportClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -588,6 +604,10 @@ const StudentList = () => {
                               textTransform: "none",
                               fontSize: "12px",
                             }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenModal(row);
+                            }}
                           >
                             Collect Fees
                           </Button>
@@ -628,6 +648,11 @@ const StudentList = () => {
           }}
         />
       </Box>
+      <CollectFeesModal
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        student={selectedStudent}
+      />
     </Box>
   );
 };
