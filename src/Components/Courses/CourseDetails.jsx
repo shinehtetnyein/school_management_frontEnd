@@ -131,7 +131,6 @@ const CourseDetails = () => {
 
 	const handleBackClick = () => {
 		navigate("/dashboard/courses");
-		navigate("/dashboard/courses"); // Assuming this is your course list route
 	};
 
 	// In the future, you would make an API call here.
