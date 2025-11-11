@@ -45,7 +45,7 @@ import {
 import { styled } from "@mui/material/styles";
 import DataServices from "../../../../services/data-services";
 
-const drawerWidthExpanded = 280;
+const drawerWidthExpanded = 250;
 const drawerWidthCollapsed = 80;
 
 const dataServices = new DataServices();

@@ -22,6 +22,7 @@ import {
   Checkbox,
   TablePagination,
   TableSortLabel,
+  Menu,
 } from "@mui/material";
 import {
   FilterList,
@@ -32,8 +33,9 @@ import {
   ViewList,
   MessageOutlined,
   CallOutlined,
-  VisibilityOutlined,
+  MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { visuallyHidden } from "@mui/utils";
 
 // --- Mock Data ---
@@ -147,16 +149,16 @@ function stableSort(array, comparator) {
 // --- Table Header ---
 // Column definitions
 const headCells = [
-  { id: "id", label: "Admission No" },
-  { id: "rollNo", label: "Roll No" },
-  { id: "name", label: "Name" },
-  { id: "class", label: "Class" },
-  { id: "section", label: "Section" },
-  { id: "gender", label: "Gender" },
-  { id: "status", label: "Status" },
-  { id: "dateOfJoin", label: "Date of Join" },
-  { id: "dob", label: "DOB" },
-  { id: "action", label: "Action", sortable: false },
+  { id: "id", label: "Admission No", minWidth: 160 },
+  { id: "rollNo", label: "Roll No", minWidth: 110 },
+  { id: "name", label: "Name", minWidth: 160 },
+  { id: "class", label: "Class", minWidth: 100 },
+  { id: "section", label: "Section", minWidth: 100 },
+  { id: "gender", label: "Gender", minWidth: 120 },
+  { id: "status", label: "Status", minWidth: 120 },
+  { id: "dateOfJoin", label: "Date of Join", minWidth: 150 },
+  { id: "dob", label: "DOB", minWidth: 150 },
+  { id: "action", label: "Action", sortable: false, minWidth: 290 },
 ];
 
 function EnhancedTableHead(props) {
@@ -188,7 +190,7 @@ function EnhancedTableHead(props) {
           <TableCell
             key={headCell.id}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ fontWeight: "bold" }}
+            sx={{ fontWeight: "bold", minWidth: headCell.minWidth }}
           >
             {headCell.sortable === false ? (
               headCell.label
@@ -219,7 +221,6 @@ function EnhancedTableHead(props) {
 
 const StudentList = () => {
   const [view, setView] = useState("list");
-
   // State for Table
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
@@ -288,6 +289,17 @@ const StudentList = () => {
     }
   };
 
+  // --- State and handlers for Export Menu ---
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleExportClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleExportClose = () => {
+    // In a real app, you'd handle the export logic here
+    setAnchorEl(null);
+  };
+
   return (
     <Box sx={{ p: 3, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
       {/* 1. Header and Breadcrumbs (Same as before) */}
@@ -305,9 +317,27 @@ const StudentList = () => {
           </Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 1.5 }}>
-          <Button variant="outlined" color="primary">
+          <Button
+            id="export-button"
+            aria-controls={open ? "export-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleExportClick}
+            variant="outlined"
+            color="primary"
+          >
             Export
           </Button>
+          <Menu
+            id="export-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleExportClose}
+            MenuListProps={{ "aria-labelledby": "export-button" }}
+          >
+            <MenuItem onClick={handleExportClose}>Export as PDF</MenuItem>
+            <MenuItem onClick={handleExportClose}>Export as Excel</MenuItem>
+          </Menu>
           <Button variant="contained" color="primary">
             Add Student
           </Button>
@@ -315,7 +345,7 @@ const StudentList = () => {
       </Box>
 
       {/* 2. Controls and Table Card */}
-      <Paper sx={{ p: 2.5, borderRadius: 2 }}>
+      <Box sx={{ p: 2.5, borderRadius: 2, bgcolor: "background.default" }}>
         {/* Top Controls (Same as before) */}
 
         <Box
@@ -420,7 +450,9 @@ const StudentList = () => {
             borderRadius: "8px",
           }}
         >
-          <Table>
+          <Table sx={{ width: "auto" }}>
+            {" "}
+            {/* Added minWidth for horizontal scrolling */}
             <EnhancedTableHead
               numSelected={selected.length}
               order={order}
@@ -445,7 +477,12 @@ const StudentList = () => {
                       tabIndex={-1}
                       key={row.id}
                       selected={isItemSelected}
-                      sx={{ "& td": { border: 0 } }} // Replicates the clean look
+                      sx={{
+                        "& td, & th": {
+                          borderBottom: (theme) =>
+                            `1px solid ${theme.palette.divider}`,
+                        },
+                      }}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
@@ -499,15 +536,63 @@ const StudentList = () => {
                       <TableCell>{row.dateOfJoin}</TableCell>
                       <TableCell>{row.dob}</TableCell>
                       <TableCell>
-                        <Box>
-                          <IconButton size="small" color="primary">
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            sx={{
+                              border: "1px solid",
+                              borderColor: "primary.light",
+                              borderRadius: "50%",
+                              backgroundColor: "rgba(0, 123, 255, 0.05)",
+                            }}
+                          >
                             <MessageOutlined fontSize="small" />
                           </IconButton>
-                          <IconButton size="small" color="success">
+                          <IconButton
+                            size="small"
+                            color="success"
+                            sx={{
+                              border: "1px solid",
+                              borderColor: "success.light",
+                              borderRadius: "50%",
+                              backgroundColor: "rgba(40, 167, 69, 0.05)",
+                            }}
+                          >
                             <CallOutlined fontSize="small" />
                           </IconButton>
-                          <IconButton size="small" color="default">
-                            <VisibilityOutlined fontSize="small" />
+                          <IconButton
+                            size="small"
+                            color="default"
+                            sx={{
+                              border: "1px solid",
+                              borderColor: "grey.400",
+                              borderRadius: "50%",
+                              backgroundColor: "rgba(0, 0, 0, 0.03)",
+                            }}
+                          >
+                            <EmailOutlinedIcon fontSize="small" />
+                          </IconButton>
+
+                          <Button
+                            variant="contained"
+                            size="small"
+                            sx={{
+                              ml: 1,
+                              textTransform: "none",
+                              fontSize: "12px",
+                            }}
+                          >
+                            Collect Fees
+                          </Button>
+                          <IconButton size="small" color="default" sx={{}}>
+                            <MoreVertIcon fontSize="small" />
                           </IconButton>
                         </Box>
                       </TableCell>
@@ -542,7 +627,7 @@ const StudentList = () => {
             "& .MuiTablePagination-input": { display: "none" },
           }}
         />
-      </Paper>
+      </Box>
     </Box>
   );
 };
