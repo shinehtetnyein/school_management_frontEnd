@@ -7,8 +7,10 @@ import Dashboard from "./Components/AdminDashboard/Dashboard";
 import { AuthProvider } from "./contexts/AuthContext";
 import StudentList from "./Components/Student/StudentList";
 import CourseList from "./Components/Courses/CourseList";
+import GradeList from "./Components/Courses/GradeList";
 import Subjects from "./Components/Courses/Subjects";
 import CourseDetails from "./Components/Courses/CourseDetails";
+import SubjectDetails from "./Components/Courses/SubjectDetail";
 
 const RouteComponent = () => {
 	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -59,11 +61,16 @@ const RouteComponent = () => {
 										element={<CourseDetails />}
 									/>
 								</Route>
-
-								<Route
-									path='subjects'
-									element={<Subjects />}
-								/>
+								<Route path='subjects'>
+									<Route
+										index
+										element={<Subjects />}
+									/>
+									<Route
+										path=':courseSlug'
+										element={<SubjectDetails />}
+									/>
+								</Route>
 							</Route>
 						</Routes>
 					</Router>

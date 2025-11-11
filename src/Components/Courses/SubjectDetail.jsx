@@ -13,9 +13,9 @@ import {} from "@mui/icons-material";
 
 // Mock data simulating what an API would return.
 // The 'slug' should match the one generated in CourseList.jsx
-const mockCourseDetails = [
+const mockSubjectDetails = [
 	{
-		slug: "grade-1",
+		slug: "mathematics",
 		name: "Mathematics",
 		description:
 			"This course covers fundamental concepts of calculus, algebra, and geometry. Students will develop problem-solving skills and a strong mathematical foundation.",
@@ -125,7 +125,7 @@ const mockCourseDetails = [
 	},
 ];
 
-const CourseDetails = () => {
+const SubjectDetails = () => {
 	const { courseSlug } = useParams();
 	const navigate = useNavigate();
 
@@ -135,7 +135,7 @@ const CourseDetails = () => {
 
 	// In the future, you would make an API call here.
 	// For now, we find the course in our mock data.
-	const course = mockCourseDetails.find((c) => c.slug === courseSlug);
+	const course = mockSubjectDetails.find((c) => c.slug === courseSlug);
 
 	// You can add a loading state for when you fetch from an API
 	// if (!course) {
@@ -156,7 +156,7 @@ const CourseDetails = () => {
 				variant='outlined'
 				onClick={handleBackClick}
 				sx={{ mb: 3 }}>
-				Back to Courses
+				Back to Subjects
 			</Button>
 			<Paper
 				elevation={3}
@@ -190,4 +190,4 @@ const CourseDetails = () => {
 	);
 };
 
-export default CourseDetails;
+export default SubjectDetails;

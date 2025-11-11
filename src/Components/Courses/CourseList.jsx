@@ -3,18 +3,18 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const courseData = [
-	{ name: "Mathematics", color: "#F44336" },
-	{ name: "English Literature", color: "#E91E63" },
-	{ name: "Physics", color: "#9C27B0" },
-	{ name: "Chemistry", color: "#673AB7" },
-	{ name: "Biology", color: "#3F51B5" },
-	{ name: "History", color: "#2196F3" },
-	{ name: "Geography", color: "#03A9F4" },
-	{ name: "Computer Science", color: "#00BCD4" },
-	{ name: "Art & Design", color: "#009688" },
-	{ name: "Music", color: "#4CAF50" },
-	{ name: "Physical Education", color: "#8BC34A" },
-	{ name: "Economics", color: "#CDDC39" },
+	{ name: "Grade 1", color: "#F44336" },
+	{ name: "Grade 2", color: "#E91E63" },
+	{ name: "Grade 3", color: "#9C27B0" },
+	{ name: "Grade 4", color: "#673AB7" },
+	{ name: "Grade 5", color: "#3F51B5" },
+	{ name: "Grade 6", color: "#2196F3" },
+	{ name: "Grade 7", color: "#03A9F4" },
+	{ name: "Grade 8", color: "#00BCD4" },
+	{ name: "Grade 9", color: "#009688" },
+	{ name: "Grade 10", color: "#4CAF50" },
+	{ name: "Grade 11", color: "#8BC34A" },
+	{ name: "Grade 12", color: "#CDDC39" },
 ];
 
 const CourseList = () => {
@@ -27,6 +27,7 @@ const CourseList = () => {
 			.replace(/\s+/g, "-");
 		// Navigate relative to the current path (/dashboard/courses)
 		navigate(courseSlug);
+		console.log("courseSlug", courseSlug);
 	};
 
 	return (
