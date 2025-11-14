@@ -1,4 +1,5 @@
-import { useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState, useMemo } from "react";
 import {
   MenuItem,
   Box,
@@ -6,22 +7,12 @@ import {
   Button,
   Breadcrumbs,
   Link,
-  Paper,
   TextField,
   IconButton,
   Avatar,
   Chip,
   ToggleButton,
   ToggleButtonGroup,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Checkbox,
-  TablePagination,
-  TableSortLabel,
   Menu,
 } from "@mui/material";
 import {
@@ -31,13 +22,9 @@ import {
   Search,
   GridView,
   ViewList,
-  MessageOutlined,
-  CallOutlined,
   Visibility,
-  MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import { visuallyHidden } from "@mui/utils";
+import TableComponent from "../../TableComponent";
 import CollectFeesModal from "./CollectFeesModal";
 
 // --- Mock Data ---
@@ -116,53 +103,7 @@ const rows = [
   },
 ];
 
-// --- Sorting Helper Functions ---
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// Stable sort preserves original order of equal elements
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-// --- Table Header ---
-// Column definitions
-const headCells = [
-  { id: "id", label: "Admission No", minWidth: 160 },
-  { id: "rollNo", label: "Roll No", minWidth: 110 },
-  { id: "name", label: "Name", minWidth: 160 },
-  { id: "class", label: "Class", minWidth: 100 },
-  { id: "section", label: "Section", minWidth: 100 },
-  { id: "gender", label: "Gender", minWidth: 120 },
-  { id: "status", label: "Status", minWidth: 120 },
-  { id: "dateOfJoin", label: "Date of Join", minWidth: 150 },
-  { id: "dob", label: "DOB", minWidth: 150 },
-  { id: "action", label: "Action", sortable: false, width: 100 },
-];
-
-function EnhancedTableHead(props) {
+/*function EnhancedTableHead(props) {
   const {
     onSelectAllClick,
     order,
@@ -215,81 +156,51 @@ function EnhancedTableHead(props) {
         ))}
       </TableRow>
     </TableHead>
-  );
-}
+}*/
 
 // --- The Main Component ---
 
 const StudentList = () => {
   const [view, setView] = useState("list");
+  const [data, setData] = useState(rows);
   // State for Table
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("name");
-  const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Matches your image's default
+  const columns = useMemo(
+    () => [
+      { Header: "Admission No", accessor: "id" },
+      { Header: "Roll No", accessor: "rollNo" },
+      {
+        Header: "Name",
+        accessor: "name",
+        Cell: ({ row }) => (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <Avatar src={row.avatar} alt={row.name} />
+            <Typography variant="body2">{row.name}</Typography>
+          </Box>
+        ),
+      },
+      { Header: "Class", accessor: "class" },
+      { Header: "Section", accessor: "section" },
+      { Header: "Gender", accessor: "gender" },
+      { Header: "Status", accessor: "status" },
+      { Header: "Date of Join", accessor: "dateOfJoin" },
+      { Header: "DOB", accessor: "dob" },
+      {
+        Header: "Action",
+        accessor: "action",
+        Cell: () => (
+          <IconButton size="small" color="primary">
+            <Visibility fontSize="small" />
+          </IconButton>
+        ),
+      },
+    ],
+    []
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedStudent(null); // Clear student on close
-  };
-
-  // --- Handlers for Table ---
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.id);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const isSelected = (id) => selected.indexOf(id) !== -1;
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  // Replicates the "Row Per Page" select from your image
-  const handleRowsPerPageSelectChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const handleViewChange = (event, nextView) => {
@@ -308,6 +219,11 @@ const StudentList = () => {
   const handleExportClose = () => {
     // In a real app, you'd handle the export logic here
     setAnchorEl(null);
+  };
+
+  const handleDeleteSelected = (selectedIds) => {
+    const newData = data.filter((row) => !selectedIds.includes(row.id));
+    setData(newData);
   };
 
   return (
@@ -426,161 +342,13 @@ const StudentList = () => {
           </Box>
         </Box>
 
-        {/* Bottom Controls (Using the Select from your image) */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
-          }}
-        >
-          {/* This is the custom "Row Per Page" select from your image */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography variant="body2">Row Per Page</Typography>
-            <TextField
-              select
-              size="small"
-              value={rowsPerPage}
-              onChange={handleRowsPerPageSelectChange}
-              sx={{ bgcolor: "background.paper" }}
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-            </TextField>
-            <Typography variant="body2">Entries</Typography>
-          </Box>
-        </Box>
-
         {/* 3. The Table */}
-        <TableContainer
-          sx={{
-            border: "1px solid rgba(224, 224, 224, 1)",
-            borderRadius: "8px",
-          }}
-        >
-          <Table sx={{ width: "auto" }}>
-            {" "}
-            {/* Added minWidth for horizontal scrolling */}
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id}
-                      selected={isItemSelected}
-                      sx={{
-                        "& td, & th": {
-                          borderBottom: (theme) =>
-                            `1px solid ${theme.palette.divider}`,
-                        },
-                      }}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{ "aria-labelledby": labelId }}
-                        />
-                      </TableCell>
-
-                      {/* Data Cells */}
-                      <TableCell>{row.id}</TableCell>
-                      <TableCell>{row.rollNo}</TableCell>
-                      <TableCell>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1.5,
-                          }}
-                        >
-                          <Avatar src={row.avatar} alt={row.name} />
-                          <Typography variant="body2">{row.name}</Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell>{row.class}</TableCell>
-                      <TableCell>{row.section}</TableCell>
-                      <TableCell>{row.gender}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={row.status}
-                          size="small"
-                          color={row.status === "Active" ? "success" : "error"}
-                          variant="outlined"
-                          sx={{
-                            bgcolor:
-                              row.status === "Active"
-                                ? "rgba(46, 125, 50, 0.1)"
-                                : "rgba(211, 47, 47, 0.1)",
-                            borderColor:
-                              row.status === "Active"
-                                ? "rgba(46, 125, 50, 0.4)"
-                                : "rgba(211, 47, 47, 0.4)",
-                            color:
-                              row.status === "Active"
-                                ? "success.dark"
-                                : "error.dark",
-                            fontWeight: 500,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>{row.dateOfJoin}</TableCell>
-                      <TableCell>{row.dob}</TableCell>
-                      <TableCell>
-                        {/* Replaced with a single visibility icon */}
-                        <IconButton size="small" color="primary">
-                          <Visibility fontSize="small" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={11} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {/* 4. Table Pagination */}
-        {/* This component provides the "1-10 of 6" and page-turning arrows */}
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          // This hides the built-in "Rows per page" selector
-          // so we can use the custom one you had in your image.
-          // To use the built-in one, remove this line and the custom Select field above.
-          labelRowsPerPage=""
-          sx={{
-            "& .MuiTablePagination-selectLabel": { display: "none" },
-            "& .MuiTablePagination-input": { display: "none" },
-          }}
+        <TableComponent
+          columns={columns}
+          data={data}
+          onDeleteSelected={handleDeleteSelected}
+          title="Students List"
+          //getRowStyles={getRowStyling}
         />
       </Box>
       <CollectFeesModal

@@ -75,7 +75,7 @@ export const lightTheme = createTheme({
       hover: "#333",
       default: "#ffffff",
       paper: "#ffffff",
-      secondary: "#f0f2f5",
+      secondary: "#f5f7fa",
       primary: "#000", // Dark background
       main: "#E8E9EC",
       back: "#FDB812", // Yellow
