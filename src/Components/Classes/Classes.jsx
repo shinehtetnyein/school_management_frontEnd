@@ -157,9 +157,7 @@ const Classes = () => {
 		<Box sx={{ p: 3 }}>
 			<Typography
 				variant='h4'
-				gutterBottom>
-				Class Management
-			</Typography>
+				gutterBottom></Typography>
 			<TableComponent
 				columns={columns}
 				data={data}
