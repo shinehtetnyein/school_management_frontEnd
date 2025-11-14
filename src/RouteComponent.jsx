@@ -10,50 +10,83 @@ import CourseList from "./Components/Courses/CourseList";
 import Subjects from "./Components/Courses/Subjects";
 import CourseDetails from "./Components/Courses/CourseDetails";
 import SubjectDetails from "./Components/Courses/SubjectDetail";
+import Classes from "./Components/Classes/Classes";
+import TimetableClass from "./Components/Classes/TimetableClass";
 
 const RouteComponent = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
+	const toggleSidebar = () => {
+		setIsSidebarCollapsed(!isSidebarCollapsed);
+	};
 
-  return (
-    <div>
-      <ThemeProvider>
-        <AuthProvider>
-          <Router>
-            <Routes>
-              <Route path="/" index element={<LoginForm />}></Route>
-              <Route path="/login" element={<LoginForm />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <Main
-                    toggleSidebar={toggleSidebar}
-                    isSidebarCollapsed={isSidebarCollapsed}
-                  />
-                }
-              >
-                {/* The index route for /dashboard */}
-                <Route index element={<Dashboard />} />
-                <Route path="students" element={<StudentList />} />
-                {/* Group course routes together */}
-                <Route path="courses">
-                  <Route index element={<CourseList />} />
-                  <Route path=":courseSlug" element={<CourseDetails />} />
-                </Route>
-                <Route path="subjects">
-                  <Route index element={<Subjects />} />
-                  <Route path=":courseSlug" element={<SubjectDetails />} />
-                </Route>
-              </Route>
-            </Routes>
-          </Router>
-        </AuthProvider>
-      </ThemeProvider>
-    </div>
-  );
+	return (
+		<div>
+			<ThemeProvider>
+				<AuthProvider>
+					<Router>
+						<Routes>
+							<Route
+								path='/'
+								index
+								element={<LoginForm />}></Route>
+							<Route
+								path='/login'
+								element={<LoginForm />}
+							/>
+							<Route
+								path='/dashboard'
+								element={
+									<Main
+										toggleSidebar={toggleSidebar}
+										isSidebarCollapsed={isSidebarCollapsed}
+									/>
+								}>
+								{/* The index route for /dashboard */}
+								<Route
+									index
+									element={<Dashboard />}
+								/>
+								<Route
+									path='students'
+									element={<StudentList />}
+								/>
+								{/* Group course routes together */}
+								<Route path='courses'>
+									<Route
+										index
+										element={<CourseList />}
+									/>
+									<Route
+										path=':courseSlug'
+										element={<CourseDetails />}
+									/>
+								</Route>
+								<Route
+									path='classes'
+									element={<Classes />}
+								/>
+								<Route
+									path='timetable'
+									element={<TimetableClass />}
+								/>
+								<Route path='subjects'>
+									<Route
+										index
+										element={<Subjects />}
+									/>
+									<Route
+										path=':courseSlug'
+										element={<SubjectDetails />}
+									/>
+								</Route>
+							</Route>
+						</Routes>
+					</Router>
+				</AuthProvider>
+			</ThemeProvider>
+		</div>
+	);
 };
 
 export default RouteComponent;
