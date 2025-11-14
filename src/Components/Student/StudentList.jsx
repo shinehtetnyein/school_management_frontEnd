@@ -33,6 +33,7 @@ import {
   ViewList,
   MessageOutlined,
   CallOutlined,
+  Visibility,
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -40,7 +41,6 @@ import { visuallyHidden } from "@mui/utils";
 import CollectFeesModal from "./CollectFeesModal";
 
 // --- Mock Data ---
-// (Same as before, but I've added a unique 'id' for sorting)
 const rows = [
   {
     id: "AD9892434",
@@ -159,7 +159,7 @@ const headCells = [
   { id: "status", label: "Status", minWidth: 120 },
   { id: "dateOfJoin", label: "Date of Join", minWidth: 150 },
   { id: "dob", label: "DOB", minWidth: 150 },
-  { id: "action", label: "Action", sortable: false, minWidth: 290 },
+  { id: "action", label: "Action", sortable: false, width: 100 },
 ];
 
 function EnhancedTableHead(props) {
@@ -230,12 +230,6 @@ const StudentList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10); // Matches your image's default
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
-
-  // --- Handlers for Collect Fees Modal ---
-  const handleOpenModal = (student) => {
-    setSelectedStudent(student);
-    setIsModalOpen(true);
-  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -552,69 +546,10 @@ const StudentList = () => {
                       <TableCell>{row.dateOfJoin}</TableCell>
                       <TableCell>{row.dob}</TableCell>
                       <TableCell>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                          }}
-                        >
-                          <IconButton
-                            size="small"
-                            color="primary"
-                            sx={{
-                              border: "1px solid",
-                              borderColor: "primary.light",
-                              borderRadius: "50%",
-                              backgroundColor: "rgba(0, 123, 255, 0.05)",
-                            }}
-                          >
-                            <MessageOutlined fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            color="success"
-                            sx={{
-                              border: "1px solid",
-                              borderColor: "success.light",
-                              borderRadius: "50%",
-                              backgroundColor: "rgba(40, 167, 69, 0.05)",
-                            }}
-                          >
-                            <CallOutlined fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            color="default"
-                            sx={{
-                              border: "1px solid",
-                              borderColor: "grey.400",
-                              borderRadius: "50%",
-                              backgroundColor: "rgba(0, 0, 0, 0.03)",
-                            }}
-                          >
-                            <EmailOutlinedIcon fontSize="small" />
-                          </IconButton>
-
-                          <Button
-                            variant="contained"
-                            size="small"
-                            sx={{
-                              ml: 1,
-                              textTransform: "none",
-                              fontSize: "12px",
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenModal(row);
-                            }}
-                          >
-                            Collect Fees
-                          </Button>
-                          <IconButton size="small" color="default" sx={{}}>
-                            <MoreVertIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
+                        {/* Replaced with a single visibility icon */}
+                        <IconButton size="small" color="primary">
+                          <Visibility fontSize="small" />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );
