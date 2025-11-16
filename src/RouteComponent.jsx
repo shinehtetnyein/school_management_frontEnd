@@ -12,6 +12,10 @@ import CourseDetails from "./Components/Courses/CourseDetails";
 import SubjectDetails from "./Components/Courses/SubjectDetail";
 import Classes from "./Components/Classes/Classes";
 import TimetableClass from "./Components/Classes/TimetableClass";
+import Homework from "./Components/Homework/Homework";
+import ExamSchedule from "./Examination/ExamSchedule";
+import ExamAttend from "./Examination/ExamAttend";
+import ExamResult from "./Examination/ExamResult";
 
 const RouteComponent = () => {
 	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -65,6 +69,22 @@ const RouteComponent = () => {
 								<Route
 									path='classes'
 									element={<Classes />}
+								/>
+								<Route
+									path='homework'
+									element={<Homework />}
+								/>
+								<Route
+									path='examination/schedule'
+									element={<ExamSchedule />}
+								/>
+								<Route
+									path='examination/attendance'
+									element={<ExamAttend />}
+								/>
+								<Route
+									path='examination/results'
+									element={<ExamResult />}
 								/>
 								<Route
 									path='timetable'

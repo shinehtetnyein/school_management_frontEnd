@@ -26,6 +26,8 @@ import {
 	Box,
 	alpha,
 } from "@mui/material";
+import FeedIcon from "@mui/icons-material/Feed";
+import BackpackIcon from "@mui/icons-material/Backpack";
 import {
 	Dashboard as DashboardIcon,
 	People as PeopleIcon,
@@ -166,6 +168,7 @@ const Leftbar = ({ isCollapsed, onClose }) => {
 				},
 			],
 		},
+
 		{
 			id: "classes",
 			icon: <ClassIcon />,
@@ -174,6 +177,12 @@ const Leftbar = ({ isCollapsed, onClose }) => {
 				{ id: "class-list", text: "Class List", route: "/dashboard/classes" },
 				{ id: "timetable", text: "Timetable", route: "/dashboard/timetable" },
 			],
+		},
+		{
+			id: "homework",
+			icon: <FeedIcon />,
+			text: "Homework",
+			route: "/dashboard/homework",
 		},
 		{
 			id: "attendance",
@@ -194,6 +203,28 @@ const Leftbar = ({ isCollapsed, onClose }) => {
 					id: "absentees",
 					text: "Absentees",
 					route: "/dashboard/attendance/absentees",
+				},
+			],
+		},
+		{
+			id: "examination",
+			icon: <BackpackIcon />,
+			text: "Examination",
+			subItems: [
+				{
+					id: "exam-schedule",
+					text: "Exam Schedule",
+					route: "/dashboard/examination/schedule",
+				},
+				{
+					id: "exam-attendance",
+					text: "Exam Attendance",
+					route: "/dashboard/examination/attendance",
+				},
+				{
+					id: "exam-results",
+					text: "Exam Results",
+					route: "/dashboard/examination/results",
 				},
 			],
 		},
