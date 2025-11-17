@@ -5,12 +5,9 @@ import {
   Box,
   Typography,
   Button,
-  Breadcrumbs,
-  Link,
   TextField,
   IconButton,
   Avatar,
-  Chip,
   ToggleButton,
   ToggleButtonGroup,
   Menu,
@@ -19,7 +16,6 @@ import {
   FilterList,
   CalendarToday,
   SortByAlpha,
-  Search,
   GridView,
   ViewList,
   Visibility,
@@ -102,63 +98,6 @@ const rows = [
     dob: "20 Jun 2015",
   },
 ];
-
-/*function EnhancedTableHead(props) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead sx={{ bgcolor: "#f5f7fa" }}>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ "aria-label": "select all students" }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ fontWeight: "bold", minWidth: headCell.minWidth }}
-          >
-            {headCell.sortable === false ? (
-              headCell.label
-            ) : (
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
-            )}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-}*/
-
-// --- The Main Component ---
 
 const StudentList = () => {
   const [view, setView] = useState("list");
@@ -271,86 +210,75 @@ const StudentList = () => {
       </Box>
 
       {/* 2. Controls and Table Card */}
-      <Box sx={{ p: 2.5, borderRadius: 2, bgcolor: "background.default" }}>
-        {/* Top Controls (Same as before) */}
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
-          }}
-        >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <Box sx={{ display: "flex", gap: 1.5 }}>
           <TextField
             size="small"
-            variant="outlined"
-            placeholder="Search..."
+            defaultValue="2025/10/31 - 2025/11/06"
             InputProps={{
-              startAdornment: <Search sx={{ mr: 1, color: "action.active" }} />,
-              sx: { bgcolor: "background.paper", borderRadius: 1.5 },
+              startAdornment: (
+                <CalendarToday
+                  sx={{ mr: 1, color: "action.active", fontSize: "18px" }}
+                />
+              ),
+            }}
+            sx={{
+              "& .MuiInputBase-root": {
+                width: "245px",
+                bgcolor: "background.paper",
+                borderRadius: "8px",
+              },
             }}
           />
-          <Box sx={{ display: "flex", gap: 1.5 }}>
-            <TextField
-              size="small"
-              defaultValue="2025/10/31 - 2025/11/06"
-              InputProps={{
-                startAdornment: (
-                  <CalendarToday
-                    sx={{ mr: 1, color: "action.active", fontSize: "18px" }}
-                  />
-                ),
-              }}
-              sx={{
-                "& .MuiInputBase-root": {
-                  width: "245px",
-                  bgcolor: "background.paper",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Button
-              variant="outlined"
-              color="inherit"
-              startIcon={<FilterList />}
-              sx={{ bgcolor: "background.paper" }}
-            >
-              Filter
-            </Button>
-            <ToggleButtonGroup
-              value={view}
-              exclusive
-              onChange={handleViewChange}
-              size="small"
-            >
-              <ToggleButton value="list">
-                <ViewList />
-              </ToggleButton>
-              <ToggleButton value="grid">
-                <GridView />
-              </ToggleButton>
-            </ToggleButtonGroup>
-            <Button
-              variant="outlined"
-              color="inherit"
-              startIcon={<SortByAlpha />}
-              sx={{ bgcolor: "background.paper" }}
-            >
-              Sort by A-Z
-            </Button>
-          </Box>
+          <Button
+            variant="outlined"
+            color="inherit"
+            startIcon={<FilterList />}
+            sx={{ bgcolor: "background.paper" }}
+          >
+            Filter
+          </Button>
+          <ToggleButtonGroup
+            value={view}
+            exclusive
+            onChange={handleViewChange}
+            size="small"
+          >
+            <ToggleButton value="list">
+              <ViewList />
+            </ToggleButton>
+            <ToggleButton value="grid">
+              <GridView />
+            </ToggleButton>
+          </ToggleButtonGroup>
+          <Button
+            variant="outlined"
+            color="inherit"
+            startIcon={<SortByAlpha />}
+            sx={{ bgcolor: "background.paper" }}
+          >
+            Sort by A-Z
+          </Button>
         </Box>
-
-        {/* 3. The Table */}
-        <TableComponent
-          columns={columns}
-          data={data}
-          onDeleteSelected={handleDeleteSelected}
-          title="Students List"
-          //getRowStyles={getRowStyling}
-        />
       </Box>
+
+      {/* 3. The Table */}
+      <TableComponent
+        columns={columns}
+        data={data}
+        onDeleteSelected={handleDeleteSelected}
+        title="Students List"
+        //getRowStyles={getRowStyling}
+      />
+
       <CollectFeesModal
         open={isModalOpen}
         onClose={handleCloseModal}
