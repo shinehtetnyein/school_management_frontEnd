@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   MenuItem,
   Box,
@@ -22,86 +22,23 @@ import {
 } from "@mui/icons-material";
 import TableComponent from "../../TableComponent";
 import CollectFeesModal from "./CollectFeesModal";
+import { useNavigate } from "react-router-dom";
+import { mockData } from "../../mockData";
 
-// --- Mock Data ---
-const rows = [
-  {
-    id: "AD9892434",
-    rollNo: 35013,
-    name: "Janet",
-    avatar: "/path/to/janet.png",
-    class: "III",
-    section: "A",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "25 Mar 2024",
-    dob: "10 Jan 2015",
-  },
-  {
-    id: "AD9892433",
-    rollNo: 35013,
-    name: "Joann",
-    avatar: "/path/to/joann.png",
-    class: "IV",
-    section: "B",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "18 Mar 2024",
-    dob: "19 Aug 2014",
-  },
-  {
-    id: "AD9892432",
-    rollNo: 35011,
-    name: "Kathleen",
-    avatar: "/path/to/kathleen.png",
-    class: "II",
-    section: "A",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "14 Mar 2024",
-    dob: "05 Dec 2017",
-  },
-  {
-    id: "AD9892431",
-    rollNo: 35010,
-    name: "Gifford",
-    avatar: "/path/to/gifford.png",
-    class: "I",
-    section: "B",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "27 Feb 2024",
-    dob: "22 Mar 2018",
-  },
-  {
-    id: "AD9892430",
-    rollNo: 35009,
-    name: "Lisa",
-    avatar: "/path/to/lisa.png",
-    class: "II",
-    section: "B",
-    gender: "Female",
-    status: "Inactive",
-    dateOfJoin: "13 Feb 2024",
-    dob: "13 May 2017",
-  },
-  {
-    id: "AD9892429",
-    rollNo: 35008,
-    name: "Ralph",
-    avatar: "/path/to/ralph.png",
-    class: "III",
-    section: "B",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "11 Feb 2024",
-    dob: "20 Jun 2015",
-  },
-];
+const { students: rows } = mockData;
 
 const StudentList = () => {
+  const navigate = useNavigate();
   const [view, setView] = useState("list");
   const [data, setData] = useState(rows);
+
+  const handleViewStudent = useCallback(
+    (studentId) => {
+      navigate(`/dashboard/students/${studentId}`);
+    },
+    [navigate]
+  );
+
   // State for Table
   const columns = useMemo(
     () => [
@@ -126,14 +63,21 @@ const StudentList = () => {
       {
         Header: "Action",
         accessor: "action",
-        Cell: () => (
-          <IconButton size="small" color="primary">
+        Cell: ({ row }) => (
+          <IconButton
+            size="small"
+            color="primary"
+            onClick={(e) => {
+              e.stopPropagation(); // Stop the event from bubbling up to the row
+              handleViewStudent(row.id);
+            }}
+          >
             <Visibility fontSize="small" />
           </IconButton>
         ),
       },
     ],
-    []
+    [handleViewStudent]
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);

@@ -13,6 +13,7 @@ import SubjectDetails from "./Components/Courses/SubjectDetail";
 import Classes from "./Components/Classes/Classes";
 import TimetableClass from "./Components/Classes/TimetableClass";
 import Students from "./Components/Student/Students";
+import StudentDetailPage from "./Components/Student/StudentDetailPage";
 
 const RouteComponent = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -42,6 +43,10 @@ const RouteComponent = () => {
                 <Route index element={<Dashboard />} />
                 <Route path="students" element={<StudentList />} />
                 <Route path="all" element={<Students />} />
+                <Route
+                  path="students/:studentId"
+                  element={<StudentDetailPage />}
+                />
                 {/* Group course routes together */}
                 <Route path="courses">
                   <Route index element={<CourseList />} />
