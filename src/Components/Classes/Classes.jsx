@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import TableComponent from "../../TableComponent";
+import TableComponent from "../../Reuseable/TableComponent";
 import { Typography, Box } from "@mui/material";
 
 /**

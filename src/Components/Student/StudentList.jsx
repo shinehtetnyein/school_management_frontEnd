@@ -20,8 +20,9 @@ import {
   ViewList,
   Visibility,
 } from "@mui/icons-material";
-import TableComponent from "../../TableComponent";
+
 import CollectFeesModal from "./CollectFeesModal";
+import TableComponent from "../../Reuseable/TableComponent";
 import { useNavigate } from "react-router-dom";
 import { mockData } from "../../mockData";
 
