@@ -58,30 +58,6 @@ const InfoItem = ({ label, value }) => (
   </Box>
 );
 
-// Kept this helper because it is used in the Left Sidebar
-const InfoBlock = ({ title, content, icon = null }) => (
-  <Box>
-    <Typography
-      variant="subtitle2"
-      color="text.secondary"
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        mb: icon ? 1 : 0.5, // More space if there's an icon
-        gap: 1,
-        textTransform: "uppercase",
-        fontSize: "0.75rem",
-      }}
-    >
-      {icon}
-      {title}
-    </Typography>
-    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-      {content}
-    </Typography>
-  </Box>
-);
-
 // --- Main Detail Page Component ---
 
 const StudentDetailPage = () => {

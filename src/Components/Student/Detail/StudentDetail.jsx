@@ -12,14 +12,7 @@ import {
   IconButton,
   Chip,
 } from "@mui/material";
-import {
-  Download,
-  LockPerson,
-  Home,
-  Apartment,
-  Phone,
-  Email,
-} from "@mui/icons-material";
+import { Download, LockPerson, Home, Apartment } from "@mui/icons-material";
 
 // --- Helper Components for this Tab ---
 
