@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginForm from "./Components/LoginForm";
+import GoogleCallbackHandler from "./Components/GoogleCallbackHandler";
 import { ThemeProvider } from "./theme/context/ThemeContext";
 import Main from "./layouts/main/Main";
 import Dashboard from "./Components/AdminDashboard/Dashboard";
@@ -17,6 +18,7 @@ import ExamSchedule from "./Examination/ExamSchedule";
 import ExamAttend from "./Examination/ExamAttend";
 import ExamResult from "./Examination/ExamResult";
 import StudentDetailPage from "./Components/Student/StudentDetailPage";
+import Students from "./Components/Student/Students";
 
 const RouteComponent = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -34,6 +36,10 @@ const RouteComponent = () => {
               <Route path="/" index element={<LoginForm />}></Route>
               <Route path="/login" element={<LoginForm />} />
               <Route
+                path="/google/callback"
+                element={<GoogleCallbackHandler />}
+              />
+              <Route
                 path="/dashboard"
                 element={
                   <Main
@@ -45,7 +51,7 @@ const RouteComponent = () => {
                 {/* The index route for /dashboard */}
                 <Route index element={<Dashboard />} />
                 <Route path="students" element={<StudentList />} />
-                {/* <Route path="all" element={<Students />} /> */}
+                <Route path="all" element={<Students />} />
                 <Route
                   path="students/:studentId"
                   element={<StudentDetailPage />}

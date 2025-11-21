@@ -33,6 +33,7 @@ import {
 } from "@mui/icons-material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { styled } from "@mui/material/styles";
+import useThemeMode from "../../../../hooks/useThemeMode";
 
 // Styled components
 const SearchContainer = styled("div")(({ theme }) => ({
@@ -71,8 +72,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Topbar = ({ toggleSidebar, toggleTheme, isDarkMode }) => {
+const Topbar = ({ toggleSidebar }) => {
   const theme = useTheme();
+  const { isDarkMode, toggleTheme } = useThemeMode();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);

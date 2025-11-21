@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   MenuItem,
   Box,
@@ -30,9 +30,11 @@ import {
   Email,
   Chat,
   Refresh, // For refresh button
+  Visibility,
 } from "@mui/icons-material";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
+import { useNavigate } from "react-router-dom";
 
 // --- Mock Data (Slightly adjusted to match image names) ---
 const rows = [
@@ -305,6 +307,14 @@ const StudentCard = ({ student, theme }) => {
     dateOfJoin,
   } = student;
 
+  const navigate = useNavigate();
+  const handleViewStudent = useCallback(
+    (studentId) => {
+      navigate(`/dashboard/students/${studentId}`);
+    },
+    [navigate]
+  );
+
   return (
     <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
       <Card
@@ -323,20 +333,21 @@ const StudentCard = ({ student, theme }) => {
               mb: 2,
             }}
           >
-            <Typography variant="body2" color="primary.secondary">
-              {id}
-            </Typography>
             <Chip
               label={status}
               color={status === "Active" ? "success" : "error"}
               size="small"
               sx={{ fontWeight: 500, fontSize: "0.75rem" }}
             />
-            <IconButton size="small">
-              <MoreVert
-                fontSize="small"
-                sx={{ color: theme.palette.action.icon }}
-              />
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={(e) => {
+                e.stopPropagation(); // Stop the event from bubbling up to the row
+                handleViewStudent(id);
+              }}
+            >
+              <Visibility fontSize="small" />
             </IconButton>
           </Box>
 

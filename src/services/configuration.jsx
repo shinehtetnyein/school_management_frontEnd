@@ -17,6 +17,8 @@ class Configuration {
   // course & subject
   SERVICE_ACTION_COURSES_LIST = "course";
   SERVICE_ACTION_SUBJECTS_LIST = "subject";
+  // student
+  SERVICE_ACTION_STUDENTS = "students";
 }
 
 export default Configuration;
