@@ -24,8 +24,9 @@ import {
   ViewList,
   Visibility,
 } from "@mui/icons-material";
-import TableComponent from "../../TableComponent";
+
 import CollectFeesModal from "./CollectFeesModal";
+import TableComponent from "../../Reuseable/TableComponent";
 
 // --- Mock Data ---
 const rows = [

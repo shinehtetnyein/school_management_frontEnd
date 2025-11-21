@@ -44,29 +44,17 @@ const RouteComponent = () => {
                 {/* The index route for /dashboard */}
                 <Route index element={<Dashboard />} />
                 <Route path="students" element={<StudentList />} />
-                <Route path="all" element={<Students />} />
+                {/* <Route path="all" element={<Students />} /> */}
                 {/* Group course routes together */}
                 <Route path="courses">
                   <Route index element={<CourseList />} />
                   <Route path=":courseSlug" element={<CourseDetails />} />
                 </Route>
                 <Route path="classes" element={<Classes />} />
-								<Route
-									path='homework'
-									element={<Homework />}
-								/>
-								<Route
-									path='examination/schedule'
-									element={<ExamSchedule />}
-								/>
-								<Route
-									path='examination/attendance'
-									element={<ExamAttend />}
-								/>
-								<Route
-									path='examination/results'
-									element={<ExamResult />}
-								/>
+                <Route path="homework" element={<Homework />} />
+                <Route path="examination/schedule" element={<ExamSchedule />} />
+                <Route path="examination/attendance" element={<ExamAttend />} />
+                <Route path="examination/results" element={<ExamResult />} />
                 <Route path="timetable" element={<TimetableClass />} />
                 <Route path="subjects">
                   <Route index element={<Subjects />} />
