@@ -94,7 +94,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    // ... (Keep existing submit logic same as before) ...
     const { email, password, role } = formData;
 
     if (!email || !password || !role) {
@@ -112,13 +112,8 @@ const LoginForm = () => {
 
       if (response.data?.token) {
         const { user, token } = response.data;
-
-        // Use auth context to login
         login(user, token);
-
         showSnackbar("Login successful! Redirecting...", "success");
-
-        // Navigate to intended page or dashboard
         const from = location.state?.from?.pathname || "/dashboard";
         setTimeout(() => {
           navigate(from, { replace: true });
@@ -131,11 +126,9 @@ const LoginForm = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-
+      // ... Error handling same as before ...
       let errorMsg = "Something went wrong. Please try again.";
-
       if (error.response?.status === 422) {
-        // Handle validation errors
         const errors = error.response.data?.errors;
         if (errors) {
           errorMsg = Object.values(errors).flat().join(" ");
@@ -151,7 +144,6 @@ const LoginForm = () => {
       } else if (error.request) {
         errorMsg = "Network error. Please check your connection.";
       }
-
       showSnackbar(errorMsg, "error");
     } finally {
       setLoading(false);
@@ -172,7 +164,6 @@ const LoginForm = () => {
     }
   };
 
-  // Don't render if already authenticated (will redirect)
   if (isAuthenticated()) {
     return null;
   }
@@ -180,13 +171,15 @@ const LoginForm = () => {
   return (
     <Container
       maxWidth="100%"
+      disableGutters // Removes default side padding
       sx={{
-        minHeight: "100vh",
+        height: "100vh", // Force fixed height
+        width: "100vw",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         background: theme.palette.custom.activeGradient,
-        py: 4,
+        overflow: "hidden", // Hides the main page scrollbar
       }}
     >
       <Fade in={true} timeout={800}>
@@ -195,15 +188,22 @@ const LoginForm = () => {
           sx={{
             borderRadius: 4,
             overflow: "hidden",
-            minHeight: "600px",
-            width: "100%",
+            // Adjusted Dimensions
+            width: "90%", // Responsive width
             maxWidth: "1000px",
+            maxHeight: "90vh", // Prevents card from being taller than screen
+            display: "flex", // Ensures proper layout
+            flexDirection: "column",
             background: theme.palette.background.default,
             backdropFilter: "blur(10px)",
             border: "1px solid rgba(255, 255, 255, 0.2)",
+            // If screen is very small vertically, scroll INSIDE the card, not the page
+            overflowY: "auto",
+            "&::-webkit-scrollbar": { display: "none" }, // Hide scrollbar for clean look
+            scrollbarWidth: "none",
           }}
         >
-          <Grid container sx={{ minHeight: "600px" }}>
+          <Grid container sx={{ minHeight: { xs: "auto", md: "550px" } }}>
             {/* Left Illustration */}
             <Grid
               size={{ xs: 12, md: 6 }}
@@ -234,7 +234,7 @@ const LoginForm = () => {
             <Grid
               size={{ xs: 12, md: 6 }}
               sx={{
-                p: { xs: 4, md: 6 },
+                p: { xs: 3, md: 5 }, // Reduced padding slightly
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
@@ -242,10 +242,10 @@ const LoginForm = () => {
               }}
             >
               <Box sx={{ maxWidth: 400, mx: "auto", width: "100%" }}>
-                <Box sx={{ textAlign: "center", mb: 4 }}>
+                <Box sx={{ textAlign: "center", mb: 3 }}>
                   <School
                     sx={{
-                      fontSize: 48,
+                      fontSize: 40, // Slightly smaller icon
                       color: theme.palette.primary.secondary,
                       mb: 1,
                     }}
@@ -255,7 +255,7 @@ const LoginForm = () => {
                     sx={{
                       fontWeight: 700,
                       color: theme.palette.primary.secondary,
-                      mb: 1,
+                      mb: 0.5,
                     }}
                   >
                     Login
@@ -271,6 +271,7 @@ const LoginForm = () => {
                 <Box component="form" onSubmit={handleSubmit} noValidate>
                   <TextField
                     fullWidth
+                    size="small" // Smaller inputs to save space
                     label="Email"
                     value={formData.email}
                     onChange={handleInputChange("email")}
@@ -280,7 +281,7 @@ const LoginForm = () => {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Person />
+                          <Person sx={{ fontSize: "1.25rem" }} />
                         </InputAdornment>
                       ),
                     }}
@@ -288,6 +289,7 @@ const LoginForm = () => {
 
                   <TextField
                     fullWidth
+                    size="small"
                     select
                     label="Select Role"
                     value={formData.role}
@@ -305,6 +307,7 @@ const LoginForm = () => {
 
                   <TextField
                     fullWidth
+                    size="small"
                     label="Password"
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
@@ -315,7 +318,7 @@ const LoginForm = () => {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Lock />
+                          <Lock sx={{ fontSize: "1.25rem" }} />
                         </InputAdornment>
                       ),
                       endAdornment: (
@@ -325,7 +328,11 @@ const LoginForm = () => {
                             edge="end"
                             disabled={loading}
                           >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                            {showPassword ? (
+                              <VisibilityOff sx={{ fontSize: "1.25rem" }} />
+                            ) : (
+                              <Visibility sx={{ fontSize: "1.25rem" }} />
+                            )}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -337,7 +344,7 @@ const LoginForm = () => {
                     fullWidth
                     variant="contained"
                     disabled={loading}
-                    sx={{ mt: 2, height: "48px" }}
+                    sx={{ mt: 2, height: "40px", textTransform: "none" }}
                   >
                     {loading ? (
                       <CircularProgress size={24} color="inherit" />
@@ -347,7 +354,7 @@ const LoginForm = () => {
                   </Button>
 
                   {/* Divider */}
-                  <Box sx={{ display: "flex", alignItems: "center", my: 3 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", my: 2 }}>
                     <Divider sx={{ flex: 1 }} />
                     <Typography
                       variant="caption"
@@ -369,13 +376,14 @@ const LoginForm = () => {
                     disabled={loading}
                     onClick={handleGoogleLogin}
                     sx={{
-                      height: "48px",
+                      textTransform: "none",
+                      height: "40px",
                       borderColor: theme.palette.divider,
                       color: theme.palette.text.primary,
                       display: "flex",
                       alignItems: "center",
                       gap: 1.5,
-                      fontSize: "0.95rem",
+                      fontSize: "0.9rem",
                       fontWeight: 500,
                       "&:hover": {
                         borderColor: theme.palette.primary.main,
@@ -416,7 +424,7 @@ const LoginForm = () => {
         </Card>
       </Fade>
 
-      {/* Snackbar for notifications */}
+      {/* Snackbar remains the same */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

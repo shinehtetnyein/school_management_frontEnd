@@ -68,6 +68,11 @@ const StyledDrawer = styled(Drawer)(({ theme, open }) => ({
     color: theme.palette.text.primary,
     border: "none",
     boxShadow: theme.shadows[3],
+    // Hide scrollbar for a cleaner look while allowing scrolling
+    "&::-webkit-scrollbar": {
+      display: "none", // For Chrome, Safari, and Opera
+    },
+    scrollbarWidth: "none", // For Firefox
   },
 }));
 
@@ -173,12 +178,12 @@ const Leftbar = ({ isCollapsed, onClose }) => {
         { id: "timetable", text: "Timetable", route: "/dashboard/timetable" },
       ],
     },
-		{
-			id: "homework",
-			icon: <FeedIcon />,
-			text: "Homework",
-			route: "/dashboard/homework",
-		},
+    {
+      id: "homework",
+      icon: <FeedIcon />,
+      text: "Homework",
+      route: "/dashboard/homework",
+    },
     {
       id: "attendance",
       icon: <CalendarIcon />,
@@ -201,28 +206,28 @@ const Leftbar = ({ isCollapsed, onClose }) => {
         },
       ],
     },
-		{
-			id: "examination",
-			icon: <BackpackIcon />,
-			text: "Examination",
-			subItems: [
-				{
-					id: "exam-schedule",
-					text: "Exam Schedule",
-					route: "/dashboard/examination/schedule",
-				},
-				{
-					id: "exam-attendance",
-					text: "Exam Attendance",
-					route: "/dashboard/examination/attendance",
-				},
-				{
-					id: "exam-results",
-					text: "Exam Results",
-					route: "/dashboard/examination/results",
-				},
-			],
-		},
+    {
+      id: "examination",
+      icon: <BackpackIcon />,
+      text: "Examination",
+      subItems: [
+        {
+          id: "exam-schedule",
+          text: "Exam Schedule",
+          route: "/dashboard/examination/schedule",
+        },
+        {
+          id: "exam-attendance",
+          text: "Exam Attendance",
+          route: "/dashboard/examination/attendance",
+        },
+        {
+          id: "exam-results",
+          text: "Exam Results",
+          route: "/dashboard/examination/results",
+        },
+      ],
+    },
     {
       id: "grades",
       icon: <AssignmentIcon />,

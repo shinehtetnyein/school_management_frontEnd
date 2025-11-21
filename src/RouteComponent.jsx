@@ -17,7 +17,7 @@ import Homework from "./Components/Homework/Homework";
 import ExamSchedule from "./Examination/ExamSchedule";
 import ExamAttend from "./Examination/ExamAttend";
 import ExamResult from "./Examination/ExamResult";
-import StudentDetailPage from "./Components/Student/StudentDetailPage";
+import StudentDetailPage from "./Components/Student/Detail/StudentDetailPage";
 import Students from "./Components/Student/Students";
 
 const RouteComponent = () => {
