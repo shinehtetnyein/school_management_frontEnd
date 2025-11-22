@@ -17,6 +17,10 @@ class Configuration {
   // course & subject
   SERVICE_ACTION_COURSES_LIST = "course";
   SERVICE_ACTION_SUBJECTS_LIST = "subject";
+  // classroom
+  SERVICE_ACTION_CLASSROOMS = "classrooms";
+  // timetable
+  SERVICE_ACTION_TIMETABLES = "timetables";
   // student
   SERVICE_ACTION_STUDENTS = "students";
 }
