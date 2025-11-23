@@ -91,9 +91,10 @@ const EnhancedTableToolbar = ({
   return (
     <Toolbar
       sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        bgcolor: "#fafafa",
+        pl: { sm: 3 }, // Adjusted padding
+        pr: { xs: 3, sm: 3 }, // Adjusted padding
+        borderRadius: "8px",
+        bgcolor: "#ffffff",
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
             alpha(
@@ -101,7 +102,7 @@ const EnhancedTableToolbar = ({
               theme.palette.action.activatedOpacity
             ),
         }),
-        py: 3,
+        pt: 0, // Toolbar is now inside the card content flow
       }}
     >
       {numSelected > 0 ? (
@@ -168,6 +169,7 @@ const TableComponent = ({
   data,
   onDeleteSelected,
   title,
+  selectable = true,
   // getRowStyles = () => ({}),
 }) => {
   // --- STATE MANAGEMENT ---
@@ -239,7 +241,7 @@ const TableComponent = ({
   };
 
   const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
+    const selectedIndex = selectable ? selected.indexOf(id) : -1;
     let newSelected = [];
 
     if (selectedIndex === -1) {
@@ -273,7 +275,13 @@ const TableComponent = ({
   }
 
   return (
-    <Paper sx={{ width: "100%", mb: 2 }}>
+    <Box
+      sx={{
+        width: "100%",
+        mb: 2,
+        backgroundColor: "#ffffff",
+      }}
+    >
       <EnhancedTableToolbar
         numSelected={selected.length}
         onDelete={handleDelete}
@@ -301,27 +309,33 @@ const TableComponent = ({
                   { color: "white" },
               }}
             >
-              <TableCell padding="checkbox">
-                <Checkbox
-                  color="primary"
-                  indeterminate={(() => {
-                    const visibleIds = currentVisibleRows.map((row) => row.id);
-                    const selectedOnPage = visibleIds.filter((id) =>
-                      selected.includes(id)
-                    );
-                    return (
-                      selectedOnPage.length > 0 &&
-                      selectedOnPage.length < visibleIds.length
-                    );
-                  })()}
-                  checked={
-                    currentVisibleRows.length > 0 &&
-                    currentVisibleRows.every((row) => selected.includes(row.id))
-                  }
-                  onChange={handleSelectAllClick}
-                  inputProps={{ "aria-label": "select all desserts" }}
-                />
-              </TableCell>
+              {selectable && (
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    color="primary"
+                    indeterminate={(() => {
+                      const visibleIds = currentVisibleRows.map(
+                        (row) => row.id
+                      );
+                      const selectedOnPage = visibleIds.filter((id) =>
+                        selected.includes(id)
+                      );
+                      return (
+                        selectedOnPage.length > 0 &&
+                        selectedOnPage.length < visibleIds.length
+                      );
+                    })()}
+                    checked={
+                      currentVisibleRows.length > 0 &&
+                      currentVisibleRows.every((row) =>
+                        selected.includes(row.id)
+                      )
+                    }
+                    onChange={handleSelectAllClick}
+                    inputProps={{ "aria-label": "select all desserts" }}
+                  />
+                </TableCell>
+              )}
               {columns.map((column) => (
                 <TableCell
                   key={column.accessor}
@@ -347,7 +361,12 @@ const TableComponent = ({
               return (
                 <TableRow
                   hover
-                  onClick={(event) => handleClick(event, row.id)}
+                  onClick={(event) => {
+                    // Prevent row click when clicking on interactive elements like buttons or checkboxes
+                    if (event.target.closest("button, input[type='checkbox']"))
+                      return;
+                    handleClick(event, row.id);
+                  }}
                   role="checkbox"
                   aria-checked={isItemSelected}
                   tabIndex={-1}
@@ -357,13 +376,15 @@ const TableComponent = ({
                   }}
                   selected={isItemSelected}
                 >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      color="primary"
-                      checked={isItemSelected}
-                      inputProps={{ "aria-labelledby": labelId }}
-                    />
-                  </TableCell>
+                  {selectable && (
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{ "aria-labelledby": labelId }}
+                      />
+                    </TableCell>
+                  )}
                   {columns.map((column) => (
                     <TableCell key={column.accessor}>
                       {column.Cell
@@ -418,7 +439,7 @@ const TableComponent = ({
           <KeyboardArrowRight />
         </IconButton>
       </Box>
-    </Paper>
+    </Box>
   );
 };
 export default TableComponent;

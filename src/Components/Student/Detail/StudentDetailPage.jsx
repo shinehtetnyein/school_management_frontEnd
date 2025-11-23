@@ -36,6 +36,9 @@ import StudentDetail from "./StudentDetail";
 
 // Import directly from the centralized mock data file
 import { mockData } from "../../../mockData";
+import StudentTimeTable from "./StudentTimeTable";
+import StudentLeaveAttendance from "./StudentLeaveAttendance";
+
 const { students: rows } = mockData;
 
 // --- Helper Components ---
@@ -130,7 +133,7 @@ const StudentDetailPage = () => {
       {/* 2. Main Two-Column Layout */}
       <Grid container spacing={3}>
         {/* --- LEFT COLUMN (Sidebar) --- */}
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, lg: 3 }}>
           <Stack spacing={3}>
             {/* Student Info Card */}
             <Card>
@@ -503,16 +506,8 @@ const StudentDetailPage = () => {
           {tabValue === 0 && <StudentDetail />}
 
           {/* Other Tab Panels (Empty for now) */}
-          {tabValue === 1 && (
-            <Box sx={{ p: 3 }}>
-              <Typography>Time Table content goes here.</Typography>
-            </Box>
-          )}
-          {tabValue === 2 && (
-            <Box sx={{ p: 3 }}>
-              <Typography>Leave & Attendance content goes here.</Typography>
-            </Box>
-          )}
+          {tabValue === 1 && <StudentTimeTable />}
+          {tabValue === 2 && <StudentLeaveAttendance />}
           {tabValue === 3 && (
             <Box sx={{ p: 3 }}>
               <Typography>Fees content goes here.</Typography>

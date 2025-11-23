@@ -153,7 +153,7 @@ const ParentInfoCard = ({ name, relation, phone, email, avatarSrc }) => (
 
 const StudentDetail = () => {
   return (
-    <Box sx={{ p: 0 }}>
+    <Box sx={{ p: 0, width: "113%", borderRadius: "8px" }}>
       <Stack spacing={3}>
         {/* Parents Information */}
         <Card>
