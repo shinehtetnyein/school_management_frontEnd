@@ -110,8 +110,18 @@ const LoginForm = () => {
         config.SERVICE_NAME + config.SERVICE_ACTION_LOGIN
       );
 
-      if (response.data?.token) {
-        const { user, token } = response.data;
+      // Backend payload shape: { success, message, data: { user, access_token, refresh_token } }
+      // Backend may return the token under `token` or `access_token`.
+      const token =
+        response?.data?.access_token ||
+        response?.data?.token ||
+        response?.access_token ||
+        response?.token ||
+        null;
+
+      if (response?.success && token) {
+        const user = response.data.user;
+        // AuthContext stores user+token; DataServices.authorize already persisted tokens in storage
         login(user, token);
         showSnackbar("Login successful! Redirecting...", "success");
         const from = location.state?.from?.pathname || "/dashboard";

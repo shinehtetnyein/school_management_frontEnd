@@ -4,13 +4,19 @@ import Configuration from "./configuration";
 import Resources from "./resources";
 
 class DataServices {
-  constructor() {
+  /**
+   * options: { autoRedirect: boolean }
+   */
+  constructor(options = {}) {
     this.config = new Configuration();
     this.resources = new Resources();
+    this.autoRedirect =
+      options.autoRedirect !== undefined ? options.autoRedirect : true;
 
     this.axiosInstance = axios.create({
       baseURL: this.resources.BACKEND_SIDE_BASE_URL,
       headers: { "Content-Type": "application/json" },
+      withCredentials: true,
     });
 
     // Attach interceptor to include token automatically
@@ -28,13 +34,17 @@ class DataServices {
       (response) => response,
       async (error) => {
         if (error.response?.status === 401) {
+          // Try refresh first
           const newToken = await this.refreshToken();
           if (newToken) {
             error.config.headers.Authorization = `Bearer ${newToken}`;
             return this.axiosInstance.request(error.config);
           } else {
             this.removeTokenCookie();
-            window.location.href = "/login";
+            // Only redirect if autoRedirect is enabled; otherwise pass the error back
+            if (this.autoRedirect) {
+              window.location.href = "/login";
+            }
           }
         }
         return Promise.reject(error);
@@ -60,8 +70,56 @@ class DataServices {
   async authorize(data, serviceName) {
     try {
       const response = await this.axiosInstance.post(serviceName, data);
-      console.log("response.data", response.data);
-      return response.data; // Success response with access_token expected
+      // Normalize payload (backend wraps payload inside `data`)
+      const payload = response.data || {};
+
+      // Extract tokens from payload (either payload.data or payload)
+      // Support multiple backend token key names (some endpoints return `token`, others `access_token`)
+      const accessToken =
+        payload.data?.access_token ||
+        payload.access_token ||
+        payload.data?.token ||
+        payload.token ||
+        null;
+      const refreshToken =
+        payload.data?.refresh_token ||
+        payload.refresh_token ||
+        payload.data?.refreshToken ||
+        payload.refreshToken ||
+        null;
+
+      // Persist tokens in cookie + localStorage so DataServices and AuthContext remain in sync
+      if (accessToken) {
+        try {
+          Cookies.set(this.config.COOKIE_NAME_TOKEN, accessToken, {
+            path: "/",
+          });
+        } catch (e) {
+          console.warn("Failed to set access token cookie:", e);
+        }
+        try {
+          localStorage.setItem("token", accessToken);
+        } catch (e) {
+          console.warn("Failed to set access token in localStorage:", e);
+        }
+      }
+
+      if (refreshToken) {
+        try {
+          Cookies.set(this.config.COOKIE_NAME_REFRESH_TOKEN, refreshToken, {
+            path: "/",
+          });
+        } catch (e) {
+          console.warn("Failed to set refresh token cookie:", e);
+        }
+        try {
+          localStorage.setItem("refresh_token", refreshToken);
+        } catch (e) {
+          console.warn("Failed to set refresh token in localStorage:", e);
+        }
+      }
+
+      return payload; // Success response with access_token expected
     } catch (error) {
       this.handleError(error);
       // Throw an error so React knows login failed
@@ -141,28 +199,61 @@ class DataServices {
   /** Token Management **/
   async refreshToken() {
     try {
-      const refreshToken = Cookies.get(this.config.COOKIE_NAME_REFRESH_TOKEN);
+      // Prefer cookie but fall back to localStorage-stored refresh token
+      const refreshToken =
+        Cookies.get(this.config.COOKIE_NAME_REFRESH_TOKEN) ||
+        localStorage.getItem("refresh_token") ||
+        null;
+
       if (!refreshToken) return null;
 
       const refreshUrl =
         this.config.SERVICE_NAME + this.config.COOKIE_REFRESH_TOKEN;
 
-      const response = await axios.post(
-        this.resources.BACKEND_SIDE_BASE_URL + refreshUrl,
-        { accessToken: refreshToken }
-      );
+      // MUST use axiosInstance NOT axios
+      const response = await this.axiosInstance.post(refreshUrl, {
+        refresh_token: refreshToken, // FIXED NAME
+      });
 
-      if (!response.data.success || !response.data.data?.access_token)
-        throw new Error("Token refresh failed");
+      const { access_token, refresh_token } = response.data?.data || {};
 
-      const { access_token, refresh_token } = response.data.data;
-      Cookies.set(this.config.COOKIE_NAME_TOKEN, access_token, { path: "/" });
-      if (refresh_token)
-        Cookies.set(this.config.COOKIE_NAME_REFRESH_TOKEN, refresh_token, {
-          path: "/",
-        });
+      if (access_token) {
+        try {
+          Cookies.set(this.config.COOKIE_NAME_TOKEN, access_token, {
+            path: "/",
+          });
+        } catch (e) {
+          console.warn("Failed to set access token cookie after refresh:", e);
+        }
+        try {
+          localStorage.setItem("token", access_token);
+        } catch (e) {
+          console.warn(
+            "Failed to set access token in localStorage after refresh:",
+            e
+          );
+        }
+      }
 
-      return access_token;
+      if (refresh_token) {
+        try {
+          Cookies.set(this.config.COOKIE_NAME_REFRESH_TOKEN, refresh_token, {
+            path: "/",
+          });
+        } catch (e) {
+          console.warn("Failed to set refresh token cookie after refresh:", e);
+        }
+        try {
+          localStorage.setItem("refresh_token", refresh_token);
+        } catch (e) {
+          console.warn(
+            "Failed to set refresh token in localStorage after refresh:",
+            e
+          );
+        }
+      }
+
+      return access_token || null;
     } catch (error) {
       console.error("Error refreshing token:", error);
       this.removeTokenCookie();
@@ -171,12 +262,28 @@ class DataServices {
   }
 
   getTokenFromCookie() {
-    return Cookies.get(this.config.COOKIE_NAME_TOKEN) || null;
+    // Prefer cookie (used for refresh flow), but fall back to localStorage token
+    return (
+      Cookies.get(this.config.COOKIE_NAME_TOKEN) ||
+      localStorage.getItem("token") ||
+      null
+    );
   }
 
   removeTokenCookie() {
-    Cookies.remove(this.config.COOKIE_NAME_TOKEN, { path: "/" });
-    Cookies.remove(this.config.COOKIE_NAME_REFRESH_TOKEN, { path: "/" });
+    try {
+      Cookies.remove(this.config.COOKIE_NAME_TOKEN, { path: "/" });
+      Cookies.remove(this.config.COOKIE_NAME_REFRESH_TOKEN, { path: "/" });
+    } catch (e) {
+      console.warn("Failed to remove auth cookies:", e);
+    }
+
+    try {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refresh_token");
+    } catch (e) {
+      console.warn("Failed to remove auth tokens from localStorage:", e);
+    }
   }
 
   /** Error Handling **/
