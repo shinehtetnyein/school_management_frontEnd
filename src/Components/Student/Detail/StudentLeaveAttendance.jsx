@@ -142,7 +142,15 @@ const attendanceMatrix = daysInMonth.map((day) => {
 
 // Columns for the Attendance TableComponent
 const attendanceColumns = [
-  { Header: "Date | Month", accessor: "day" },
+  {
+    Header: "Date | Month",
+    accessor: "day",
+    Cell: ({ value }) => (
+      <Typography variant="body2" sx={{ fontWeight: 500, minWidth: "120px" }}>
+        {value}
+      </Typography>
+    ),
+  },
   ...months.map((month) => ({
     Header: month.toLowerCase(),
     accessor: month,

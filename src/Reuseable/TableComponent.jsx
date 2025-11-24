@@ -241,7 +241,11 @@ const TableComponent = ({
   };
 
   const handleClick = (event, id) => {
-    const selectedIndex = selectable ? selected.indexOf(id) : -1;
+    if (!selectable) {
+      return;
+    }
+
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
