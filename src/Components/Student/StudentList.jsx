@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   MenuItem,
   Box,
@@ -11,6 +11,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Menu,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
 import {
   FilterList,
@@ -22,16 +24,71 @@ import {
 } from "@mui/icons-material";
 
 import CollectFeesModal from "./CollectFeesModal";
+import AddStudentFormDialog from "./AddStudentFormDialog";
 import TableComponent from "../../Reuseable/TableComponent";
 import { useNavigate } from "react-router-dom";
-import { mockData } from "../../mockData";
+import DataServices from "../../services/data-services";
+import Configuration from "../../services/configuration";
 
-const { students: rows } = mockData;
+// fallback empty rows
+const rows = [];
 
 const StudentList = () => {
   const navigate = useNavigate();
   const [view, setView] = useState("list");
   const [data, setData] = useState(rows);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+
+  const dataService = new DataServices();
+  const config = new Configuration();
+
+  const fetchStudents = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await dataService.retrieve(
+        config.SERVICE_NAME + config.SERVICE_ACTION_STUDENTS
+      );
+      const list = res?.data || res || [];
+
+      const students = Array.isArray(list)
+        ? list
+        : list.students || list.data || [];
+
+      const mapped = students.map((s) => ({
+        id: s.id,
+        rollNo: s.roll_no || "",
+        name: s.name || `${s.first_name || ""} ${s.last_name || ""}`.trim(),
+        avatar: s.profile_photo || "/static/images/avatar/1.jpg",
+        class:
+          s.courses && s.courses.length
+            ? s.courses[0].name
+            : s.classrooms && s.classrooms.length
+            ? s.classrooms[0].room_number
+            : "N/A",
+        section: s.sections && s.sections.length ? s.sections[0].name : "N/A",
+        gender: s.gender || "",
+        status: s.status || "",
+        dateOfJoin:
+          s.enrollment_date || (s.created_at ? s.created_at.split("T")[0] : ""),
+        dob: s.date_of_birth || "",
+      }));
+
+      setData(mapped);
+    } catch (err) {
+      console.error("Failed to fetch students", err);
+      setError("Failed to load students");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleViewStudent = useCallback(
     (studentId) => {
@@ -80,6 +137,7 @@ const StudentList = () => {
     ],
     [handleViewStudent]
   );
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
@@ -148,7 +206,11 @@ const StudentList = () => {
             <MenuItem onClick={handleExportClose}>Export as PDF</MenuItem>
             <MenuItem onClick={handleExportClose}>Export as Excel</MenuItem>
           </Menu>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenAddDialog(true)}
+          >
             Add Student
           </Button>
         </Box>
@@ -216,12 +278,32 @@ const StudentList = () => {
       </Box>
 
       {/* 3. The Table */}
-      <TableComponent
-        columns={columns}
-        data={data}
-        onDeleteSelected={handleDeleteSelected}
-        title="Students List"
-        //getRowStyles={getRowStyling}
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Box sx={{ mt: 2 }}>
+          <Alert severity="error">
+            {error} <Button onClick={fetchStudents}>Retry</Button>
+          </Alert>
+        </Box>
+      ) : (
+        <TableComponent
+          columns={columns}
+          data={data}
+          onDeleteSelected={handleDeleteSelected}
+          title="Students List"
+        />
+      )}
+
+      <AddStudentFormDialog
+        open={openAddDialog}
+        onClose={() => setOpenAddDialog(false)}
+        onSuccess={() => {
+          setOpenAddDialog(false);
+          fetchStudents();
+        }}
       />
 
       <CollectFeesModal

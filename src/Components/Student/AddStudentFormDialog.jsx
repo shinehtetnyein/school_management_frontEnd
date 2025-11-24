@@ -25,7 +25,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import DataServices from "../../services/data-services";
 import Configuration from "../../services/configuration";
 
-const AddStudentFormDialog = ({ open, onClose }) => {
+const AddStudentFormDialog = ({ open, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -38,7 +38,7 @@ const AddStudentFormDialog = ({ open, onClose }) => {
     mother_tongue: "",
     language: "English",
     gender: "male",
-    student_id: "",
+    roll_no: "",
     enrollment_date: null,
     status: "active",
     course_id: "",
@@ -93,8 +93,7 @@ const AddStudentFormDialog = ({ open, onClose }) => {
     if (!formData.date_of_birth)
       newErrors.date_of_birth = "Date of birth is required";
     if (!formData.nrc.trim()) newErrors.nrc = "NRC is required";
-    if (!formData.student_id.trim())
-      newErrors.student_id = "Student ID is required";
+    if (!formData.roll_no.trim()) newErrors.roll_no = "Roll number is required";
     if (!formData.enrollment_date)
       newErrors.enrollment_date = "Enrollment date is required";
     if (!formData.course_id) newErrors.course_id = "Course ID is required";
@@ -132,7 +131,12 @@ const AddStudentFormDialog = ({ open, onClose }) => {
         `${config.SERVICE_NAME}${config.SERVICE_ACTION_STUDENTS}`
       );
 
-      if (response.success) {
+      const ok =
+        response?.success ||
+        response?.data ||
+        response?.id ||
+        response?.student;
+      if (ok) {
         setSuccessMessage("Student added successfully!");
         setFormData({
           first_name: "",
@@ -146,7 +150,7 @@ const AddStudentFormDialog = ({ open, onClose }) => {
           mother_tongue: "",
           language: "English",
           gender: "male",
-          student_id: "",
+          roll_no: "",
           enrollment_date: null,
           status: "active",
           course_id: "",
@@ -154,6 +158,13 @@ const AddStudentFormDialog = ({ open, onClose }) => {
           section_id: "",
           classroom_id: "",
         });
+        if (typeof onSuccess === "function") {
+          try {
+            onSuccess();
+          } catch (e) {
+            // ignore
+          }
+        }
       } else {
         throw new Error("Failed to add student");
       }
@@ -162,6 +173,14 @@ const AddStudentFormDialog = ({ open, onClose }) => {
       setErrors({ submit: "Error adding student. Please try again." });
     } finally {
       setIsSubmitting(false);
+      // Notify parent if provided when we successfully added a student
+      if (successMessage && typeof onSuccess === "function") {
+        try {
+          onSuccess();
+        } catch (e) {
+          // ignore callback errors
+        }
+      }
     }
   };
 
@@ -333,12 +352,12 @@ const AddStudentFormDialog = ({ open, onClose }) => {
 
               <TextField
                 fullWidth
-                label="Student ID *"
-                name="student_id"
-                value={formData.student_id}
+                label="Roll No *"
+                name="roll_no"
+                value={formData.roll_no}
                 onChange={handleChange}
-                error={!!errors.student_id}
-                helperText={errors.student_id}
+                error={!!errors.roll_no}
+                helperText={errors.roll_no}
               />
               <DatePicker
                 label="Enrollment Date *"

@@ -36,276 +36,279 @@ import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlin
 import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
 import { useNavigate } from "react-router-dom";
 import AddStudentFormDialog from "./AddStudentFormDialog";
+import DataServices from "../../services/data-services";
+import Configuration from "../../services/configuration";
+import { useEffect } from "react";
 
 // --- Mock Data (Slightly adjusted to match image names) ---
-const rows = [
-  {
-    id: "AD9892434",
-    rollNo: 35013,
-    name: "Janet Daniel",
-    avatar: "/static/images/avatar/1.jpg",
-    class: "III",
-    section: "A",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "10 Jan 2015",
-  },
-  {
-    id: "AD9892433",
-    rollNo: 35012,
-    name: "Joann Michael",
-    avatar: "/static/images/avatar/2.jpg",
-    class: "IV",
-    section: "B",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "19 Aug 2014",
-  },
-  {
-    id: "AD9892432",
-    rollNo: 35011,
-    name: "Kathleen Dison",
-    avatar: "/static/images/avatar/3.jpg",
-    class: "III",
-    section: "A",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "05 Dec 2017",
-  },
-  {
-    id: "AD9892431",
-    rollNo: 35010,
-    name: "Lisa Gourley",
-    avatar: "/static/images/avatar/4.jpg",
-    class: "II",
-    section: "B",
-    gender: "Female",
-    status: "Inactive",
-    dateOfJoin: "13 May 2017",
-  },
-  {
-    id: "AD9892430",
-    rollNo: 35009,
-    name: "Gifford Fox",
-    avatar: "/static/images/avatar/5.jpg",
-    class: "I",
-    section: "B",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "27 Feb 2018",
-  },
-  {
-    id: "AD9892429",
-    rollNo: 35008,
-    name: "Michael Johnson",
-    avatar: "/static/images/avatar/6.jpg",
-    class: "V",
-    section: "A",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "15 Mar 2019",
-  },
-  {
-    id: "AD9892428",
-    rollNo: 35007,
-    name: "Sarah Williams",
-    avatar: "/static/images/avatar/7.jpg",
-    class: "IV",
-    section: "C",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "22 Jul 2016",
-  },
-  {
-    id: "AD9892427",
-    rollNo: 35006,
-    name: "Robert Brown",
-    avatar: "/static/images/avatar/8.jpg",
-    class: "II",
-    section: "A",
-    gender: "Male",
-    status: "Inactive",
-    dateOfJoin: "30 Nov 2018",
-  },
-  {
-    id: "AD9892426",
-    rollNo: 35005,
-    name: "Emily Davis",
-    avatar: "/static/images/avatar/1.jpg",
-    class: "III",
-    section: "B",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "14 Apr 2020",
-  },
-  {
-    id: "AD9892425",
-    rollNo: 35004,
-    name: "David Wilson",
-    avatar: "/static/images/avatar/2.jpg",
-    class: "V",
-    section: "B",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "08 Sep 2017",
-  },
-  {
-    id: "AD9892424",
-    rollNo: 35003,
-    name: "Jennifer Miller",
-    avatar: "/static/images/avatar/3.jpg",
-    class: "I",
-    section: "A",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "19 Dec 2019",
-  },
-  {
-    id: "AD9892423",
-    rollNo: 35002,
-    name: "Christopher Moore",
-    avatar: "/static/images/avatar/4.jpg",
-    class: "IV",
-    section: "A",
-    gender: "Male",
-    status: "Inactive",
-    dateOfJoin: "03 Feb 2016",
-  },
-  {
-    id: "AD9892422",
-    rollNo: 35001,
-    name: "Amanda Taylor",
-    avatar: "/static/images/avatar/5.jpg",
-    class: "II",
-    section: "C",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "25 Aug 2021",
-  },
-  {
-    id: "AD9892421",
-    rollNo: 35000,
-    name: "James Anderson",
-    avatar: "/static/images/avatar/6.jpg",
-    class: "III",
-    section: "C",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "11 Jun 2018",
-  },
-  {
-    id: "AD9892420",
-    rollNo: 34999,
-    name: "Jessica Thomas",
-    avatar: "/static/images/avatar/7.jpg",
-    class: "V",
-    section: "C",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "07 Mar 2020",
-  },
-  {
-    id: "AD9892419",
-    rollNo: 34998,
-    name: "Daniel Jackson",
-    avatar: "/static/images/avatar/8.jpg",
-    class: "I",
-    section: "C",
-    gender: "Male",
-    status: "Inactive",
-    dateOfJoin: "29 Oct 2019",
-  },
-  {
-    id: "AD9892418",
-    rollNo: 34997,
-    name: "Michelle White",
-    avatar: "/static/images/avatar/1.jpg",
-    class: "IV",
-    section: "D",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "16 Jan 2022",
-  },
-  {
-    id: "AD9892417",
-    rollNo: 34996,
-    name: "Kevin Harris",
-    avatar: "/static/images/avatar/2.jpg",
-    class: "II",
-    section: "D",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "09 May 2021",
-  },
-  {
-    id: "AD9892416",
-    rollNo: 34995,
-    name: "Nicole Martin",
-    avatar: "/static/images/avatar/3.jpg",
-    class: "III",
-    section: "D",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "24 Sep 2020",
-  },
-  {
-    id: "AD9892415",
-    rollNo: 34994,
-    name: "Andrew Thompson",
-    avatar: "/static/images/avatar/4.jpg",
-    class: "V",
-    section: "D",
-    gender: "Male",
-    status: "Inactive",
-    dateOfJoin: "12 Dec 2018",
-  },
-  {
-    id: "AD9892414",
-    rollNo: 34993,
-    name: "Rachel Garcia",
-    avatar: "/static/images/avatar/5.jpg",
-    class: "I",
-    section: "D",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "05 Apr 2022",
-  },
-  {
-    id: "AD9892413",
-    rollNo: 34992,
-    name: "Brian Martinez",
-    avatar: "/static/images/avatar/6.jpg",
-    class: "IV",
-    section: "E",
-    gender: "Male",
-    status: "Active",
-    dateOfJoin: "18 Jul 2021",
-  },
-  {
-    id: "AD9892412",
-    rollNo: 34991,
-    name: "Lauren Robinson",
-    avatar: "/static/images/avatar/7.jpg",
-    class: "II",
-    section: "E",
-    gender: "Female",
-    status: "Active",
-    dateOfJoin: "31 Jan 2020",
-  },
-];
+// const rows = [
+//   {
+//     id: "AD9892434",
+//     rollNo: 35013,
+//     name: "Janet Daniel",
+//     avatar: "/static/images/avatar/1.jpg",
+//     class: "III",
+//     section: "A",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "10 Jan 2015",
+//   },
+//   {
+//     id: "AD9892433",
+//     rollNo: 35012,
+//     name: "Joann Michael",
+//     avatar: "/static/images/avatar/2.jpg",
+//     class: "IV",
+//     section: "B",
+//     gender: "Male",
+//     status: "Active",
+//     dateOfJoin: "19 Aug 2014",
+//   },
+//   {
+//     id: "AD9892432",
+//     rollNo: 35011,
+//     name: "Kathleen Dison",
+//     avatar: "/static/images/avatar/3.jpg",
+//     class: "III",
+//     section: "A",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "05 Dec 2017",
+//   },
+//   {
+//     id: "AD9892431",
+//     rollNo: 35010,
+//     name: "Lisa Gourley",
+//     avatar: "/static/images/avatar/4.jpg",
+//     class: "II",
+//     section: "B",
+//     gender: "Female",
+//     status: "Inactive",
+//     dateOfJoin: "13 May 2017",
+//   },
+//   {
+//     id: "AD9892430",
+//     rollNo: 35009,
+//     name: "Gifford Fox",
+//     avatar: "/static/images/avatar/5.jpg",
+//     class: "I",
+//     section: "B",
+//     gender: "Male",
+//     status: "Active",
+//     dateOfJoin: "27 Feb 2018",
+//   },
+//   {
+//     id: "AD9892429",
+//     rollNo: 35008,
+//     name: "Michael Johnson",
+//     avatar: "/static/images/avatar/6.jpg",
+//     class: "V",
+//     section: "A",
+//     gender: "Male",
+//     status: "Active",
+//     dateOfJoin: "15 Mar 2019",
+//   },
+//   {
+//     id: "AD9892428",
+//     rollNo: 35007,
+//     name: "Sarah Williams",
+//     avatar: "/static/images/avatar/7.jpg",
+//     class: "IV",
+//     section: "C",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "22 Jul 2016",
+//   },
+//   {
+//     id: "AD9892427",
+//     rollNo: 35006,
+//     name: "Robert Brown",
+//     avatar: "/static/images/avatar/8.jpg",
+//     class: "II",
+//     section: "A",
+//     gender: "Male",
+//     status: "Inactive",
+//     dateOfJoin: "30 Nov 2018",
+//   },
+//   {
+//     id: "AD9892426",
+//     rollNo: 35005,
+//     name: "Emily Davis",
+//     avatar: "/static/images/avatar/1.jpg",
+//     class: "III",
+//     section: "B",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "14 Apr 2020",
+//   },
+//   {
+//     id: "AD9892425",
+//     rollNo: 35004,
+//     name: "David Wilson",
+//     avatar: "/static/images/avatar/2.jpg",
+//     class: "V",
+//     section: "B",
+//     gender: "Male",
+//     status: "Active",
+//     dateOfJoin: "08 Sep 2017",
+//   },
+//   {
+//     id: "AD9892424",
+//     rollNo: 35003,
+//     name: "Jennifer Miller",
+//     avatar: "/static/images/avatar/3.jpg",
+//     class: "I",
+//     section: "A",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "19 Dec 2019",
+//   },
+//   {
+//     id: "AD9892423",
+//     rollNo: 35002,
+//     name: "Christopher Moore",
+//     avatar: "/static/images/avatar/4.jpg",
+//     class: "IV",
+//     section: "A",
+//     gender: "Male",
+//     status: "Inactive",
+//     dateOfJoin: "03 Feb 2016",
+//   },
+//   {
+//     id: "AD9892422",
+//     rollNo: 35001,
+//     name: "Amanda Taylor",
+//     avatar: "/static/images/avatar/5.jpg",
+//     class: "II",
+//     section: "C",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "25 Aug 2021",
+//   },
+//   {
+//     id: "AD9892421",
+//     rollNo: 35000,
+//     name: "James Anderson",
+//     avatar: "/static/images/avatar/6.jpg",
+//     class: "III",
+//     section: "C",
+//     gender: "Male",
+//     status: "Active",
+//     dateOfJoin: "11 Jun 2018",
+//   },
+//   {
+//     id: "AD9892420",
+//     rollNo: 34999,
+//     name: "Jessica Thomas",
+//     avatar: "/static/images/avatar/7.jpg",
+//     class: "V",
+//     section: "C",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "07 Mar 2020",
+//   },
+//   {
+//     id: "AD9892419",
+//     rollNo: 34998,
+//     name: "Daniel Jackson",
+//     avatar: "/static/images/avatar/8.jpg",
+//     class: "I",
+//     section: "C",
+//     gender: "Male",
+//     status: "Inactive",
+//     dateOfJoin: "29 Oct 2019",
+//   },
+//   {
+//     id: "AD9892418",
+//     rollNo: 34997,
+//     name: "Michelle White",
+//     avatar: "/static/images/avatar/1.jpg",
+//     class: "IV",
+//     section: "D",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "16 Jan 2022",
+//   },
+//   {
+//     id: "AD9892417",
+//     rollNo: 34996,
+//     name: "Kevin Harris",
+//     avatar: "/static/images/avatar/2.jpg",
+//     class: "II",
+//     section: "D",
+//     gender: "Male",
+//     status: "Active",
+//     dateOfJoin: "09 May 2021",
+//   },
+//   {
+//     id: "AD9892416",
+//     rollNo: 34995,
+//     name: "Nicole Martin",
+//     avatar: "/static/images/avatar/3.jpg",
+//     class: "III",
+//     section: "D",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "24 Sep 2020",
+//   },
+//   {
+//     id: "AD9892415",
+//     rollNo: 34994,
+//     name: "Andrew Thompson",
+//     avatar: "/static/images/avatar/4.jpg",
+//     class: "V",
+//     section: "D",
+//     gender: "Male",
+//     status: "Inactive",
+//     dateOfJoin: "12 Dec 2018",
+//   },
+//   {
+//     id: "AD9892414",
+//     rollNo: 34993,
+//     name: "Rachel Garcia",
+//     avatar: "/static/images/avatar/5.jpg",
+//     class: "I",
+//     section: "D",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "05 Apr 2022",
+//   },
+//   {
+//     id: "AD9892413",
+//     rollNo: 34992,
+//     name: "Brian Martinez",
+//     avatar: "/static/images/avatar/6.jpg",
+//     class: "IV",
+//     section: "E",
+//     gender: "Male",
+//     status: "Active",
+//     dateOfJoin: "18 Jul 2021",
+//   },
+//   {
+//     id: "AD9892412",
+//     rollNo: 34991,
+//     name: "Lauren Robinson",
+//     avatar: "/static/images/avatar/7.jpg",
+//     class: "II",
+//     section: "E",
+//     gender: "Female",
+//     status: "Active",
+//     dateOfJoin: "31 Jan 2020",
+//   },
+// ];
 
 // --- New Student Card Component ---
 const StudentCard = ({ student, theme }) => {
   const {
     id,
-    rollNo,
+    roll_no,
     name,
     avatar,
     class: className,
     section,
     gender,
     status,
-    dateOfJoin,
+    enrollment_data,
   } = student;
 
   const navigate = useNavigate();
@@ -381,7 +384,7 @@ const StudentCard = ({ student, theme }) => {
               >
                 Roll No
               </Typography>
-              <Typography variant="body2">{rollNo}</Typography>
+              <Typography variant="body2">{roll_no}</Typography>
             </Grid>
             <Grid size={{ xs: 4 }}>
               <Typography
@@ -401,7 +404,7 @@ const StudentCard = ({ student, theme }) => {
               >
                 Joined On
               </Typography>
-              <Typography variant="body2">{dateOfJoin}</Typography>
+              <Typography variant="body2">{enrollment_data}</Typography>
             </Grid>
           </Grid>
 
@@ -467,7 +470,53 @@ const Students = () => {
   const [openDialog, setOpenDialog] = useState(false);
   // Set default view to "grid" to match the image
   const [view, setView] = useState("grid");
-  const [data] = useState(rows);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const dataService = new DataServices();
+  const config = new Configuration();
+
+  const fetchStudents = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await dataService.retrieve(
+        config.SERVICE_NAME + config.SERVICE_ACTION_STUDENTS
+      );
+      // res may be { data: [...] } or an array directly depending on backend wrapper
+      const students = res?.data || res || [];
+      if (Array.isArray(students) && students.length) {
+        setData(students);
+      } else if (Array.isArray(res)) {
+        setData(res);
+      } else if (
+        students &&
+        typeof students === "object" &&
+        !Array.isArray(students)
+      ) {
+        // try to find list inside object
+        const maybeList =
+          students.list || students.items || students.students || [];
+        setData(maybeList);
+      } else {
+        setData([]);
+      }
+    } catch (err) {
+      console.error("Failed fetching students", err);
+      setError("Failed to load students");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log("data", data);
+
   const [visibleCount, setVisibleCount] = useState(12);
 
   const handleLoadMore = () => {
@@ -565,6 +614,10 @@ const Students = () => {
           <AddStudentFormDialog
             open={openDialog}
             onClose={() => setOpenDialog(false)}
+            onSuccess={() => {
+              setOpenDialog(false);
+              fetchStudents();
+            }}
           />
         </Box>
       </Box>
