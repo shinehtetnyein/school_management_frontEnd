@@ -35,6 +35,7 @@ import {
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
 import { useNavigate } from "react-router-dom";
+import AddStudentFormDialog from "./AddStudentFormDialog";
 
 // --- Mock Data (Slightly adjusted to match image names) ---
 const rows = [
@@ -463,6 +464,7 @@ const StudentCard = ({ student, theme }) => {
 // --- The Main Component ---
 const Students = () => {
   const theme = useTheme();
+  const [openDialog, setOpenDialog] = useState(false);
   // Set default view to "grid" to match the image
   const [view, setView] = useState("grid");
   const [data] = useState(rows);
@@ -552,9 +554,18 @@ const Students = () => {
             <MenuItem onClick={handleExportClose}>Export as PDF</MenuItem>
             <MenuItem onClick={handleExportClose}>Export as Excel</MenuItem>
           </Menu>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenDialog(true)}
+          >
             Add Student
           </Button>
+
+          <AddStudentFormDialog
+            open={openDialog}
+            onClose={() => setOpenDialog(false)}
+          />
         </Box>
       </Box>
 
