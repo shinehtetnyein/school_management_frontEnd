@@ -119,8 +119,11 @@ const LoginForm = () => {
         response?.token ||
         null;
 
-      if (response?.success && token) {
-        const user = response.data.user;
+      // Backend may return token directly (no `success` flag). Treat any response
+      // that contains a token as a successful login.
+      if (token) {
+        const user =
+          response.data?.user || response.user || response?.data || null;
         // AuthContext stores user+token; DataServices.authorize already persisted tokens in storage
         login(user, token);
         showSnackbar("Login successful! Redirecting...", "success");

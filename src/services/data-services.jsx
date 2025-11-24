@@ -119,7 +119,23 @@ class DataServices {
         }
       }
 
-      return payload; // Success response with access_token expected
+      // Normalize payload into consistent shape: { success, message, data }
+      const normalized = {
+        success: payload.success ?? Boolean(accessToken),
+        message: payload.message || "",
+        data: payload.data ? { ...payload.data } : {},
+        errors: payload.errors || [],
+      };
+
+      if (accessToken) normalized.data.access_token = accessToken;
+      if (refreshToken) normalized.data.refresh_token = refreshToken;
+
+      // Ensure user object is present in data (support both payload.data.user and payload.user)
+      if (!normalized.data.user) {
+        normalized.data.user = payload.user || payload.data?.user || null;
+      }
+
+      return normalized; // Return normalized response
     } catch (error) {
       this.handleError(error);
       // Throw an error so React knows login failed
