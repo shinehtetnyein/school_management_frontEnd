@@ -38,6 +38,7 @@ import StudentDetail from "./StudentDetail";
 import { mockData } from "../../../mockData";
 import StudentTimeTable from "./StudentTimeTable";
 import StudentLeaveAttendance from "./StudentLeaveAttendance";
+import StudentFees from "./StudentFees";
 
 const { students: rows } = mockData;
 
@@ -508,11 +509,7 @@ const StudentDetailPage = () => {
           {/* Other Tab Panels (Empty for now) */}
           {tabValue === 1 && <StudentTimeTable />}
           {tabValue === 2 && <StudentLeaveAttendance />}
-          {tabValue === 3 && (
-            <Box sx={{ p: 3 }}>
-              <Typography>Fees content goes here.</Typography>
-            </Box>
-          )}
+          {tabValue === 3 && <StudentFees />}
           {tabValue === 4 && (
             <Box sx={{ p: 3 }}>
               <Typography>Exam & Results content goes here.</Typography>
