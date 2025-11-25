@@ -16,7 +16,7 @@ class DataServices {
     this.axiosInstance = axios.create({
       baseURL: this.resources.BACKEND_SIDE_BASE_URL,
       headers: { "Content-Type": "application/json" },
-      withCredentials: true,
+      // withCredentials: true,
     });
 
     // Attach interceptor to include token automatically
