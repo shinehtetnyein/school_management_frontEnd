@@ -87,6 +87,7 @@ const EnhancedTableToolbar = ({
   title,
   filterText,
   onFilterChange,
+  showSearch,
 }) => {
   return (
     <Toolbar
@@ -115,14 +116,22 @@ const EnhancedTableToolbar = ({
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          {title}
-        </Typography>
+        title && (
+          <Typography
+            sx={{
+              flex: "1 1 100%",
+              fontWeight: 700,
+              fontSize: "1.125rem",
+              color: "text.primary",
+              pl: 1,
+            }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            {title}
+          </Typography>
+        )
       )}
 
       {numSelected > 0 ? (
@@ -131,7 +140,7 @@ const EnhancedTableToolbar = ({
             <DeleteIcon />
           </IconButton>
         </Tooltip>
-      ) : (
+      ) : showSearch ? (
         <TextField
           variant="standard"
           value={filterText}
@@ -145,7 +154,7 @@ const EnhancedTableToolbar = ({
             startAdornment: <SearchIcon position="start" />,
           }}
         />
-      )}
+      ) : null}
     </Toolbar>
   );
 };
@@ -170,6 +179,7 @@ const TableComponent = ({
   onDeleteSelected,
   title,
   selectable = true,
+  showSearch = true,
   // getRowStyles = () => ({}),
 }) => {
   // --- STATE MANAGEMENT ---
@@ -292,6 +302,7 @@ const TableComponent = ({
         title={title}
         filterText={filterText}
         onFilterChange={handleFilterChange}
+        showSearch={showSearch}
       />
       <TableContainer
         sx={{
@@ -301,7 +312,12 @@ const TableComponent = ({
           "& .MuiTableHead-root": { position: "sticky", top: 0, zIndex: 1 },
         }}
       >
-        <Table>
+        <Table
+          sx={{
+            tableLayout: columns.some((c) => c.width) ? "fixed" : "auto",
+            minWidth: "100%",
+          }}
+        >
           <TableHead>
             <TableRow
               sx={{
@@ -344,11 +360,19 @@ const TableComponent = ({
                 <TableCell
                   key={column.accessor}
                   sortDirection={orderBy === column.accessor ? order : false}
+                  sx={{
+                    width: column.width || "auto",
+                    maxWidth: column.width || "none",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
                 >
                   <TableSortLabel
                     active={orderBy === column.accessor}
                     direction={orderBy === column.accessor ? order : "asc"}
                     onClick={() => handleRequestSort(column.accessor)}
+                    sx={{ display: "inline-flex", alignItems: "center" }}
                   >
                     {column.Header}
                   </TableSortLabel>
@@ -390,7 +414,16 @@ const TableComponent = ({
                     </TableCell>
                   )}
                   {columns.map((column) => (
-                    <TableCell key={column.accessor}>
+                    <TableCell
+                      key={column.accessor}
+                      sx={{
+                        width: column.width || "auto",
+                        maxWidth: column.width || "none",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {column.Cell
                         ? column.Cell({ value: row[column.accessor], row: row })
                         : row[column.accessor]}

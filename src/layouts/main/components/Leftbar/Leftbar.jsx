@@ -21,28 +21,28 @@ import {
   Tooltip,
   useMediaQuery,
   useTheme,
-  Typography,
-  Divider,
   Box,
   alpha,
 } from "@mui/material";
 import FeedIcon from "@mui/icons-material/Feed";
-import BackpackIcon from "@mui/icons-material/Backpack";
 import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   Class as ClassIcon,
-  Assignment as AssignmentIcon,
   Book as BookIcon,
   CalendarToday as CalendarIcon,
   AttachMoney as MoneyIcon,
-  Report as ReportIcon,
-  Settings as SettingsIcon,
   Logout as LogoutIcon,
   ExpandLess,
   ExpandMore,
   ChevronRight,
-  Message as MessageIcon,
+  School as SchoolIcon,
+  Assignment as AssignmentIcon,
+  LibraryBooks as LibraryBooksIcon,
+  AccountBalance as AccountBalanceIcon,
+  Group as GroupIcon,
+  MenuBook as MenuBookIcon,
+  Category as CategoryIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import DataServices from "../../../../services/data-services";
@@ -190,36 +190,26 @@ const Leftbar = ({ isCollapsed, onClose }) => {
       text: "Attendance",
       subItems: [
         {
-          id: "daily-attendance",
-          text: "Daily Attendance",
-          route: "/dashboard/attendance/daily",
+          id: "student-attendance",
+          text: "Student Attendance",
+          route: "/dashboard/student-attendance",
         },
         {
-          id: "attendance-report",
-          text: "Attendance Report",
-          route: "/dashboard/attendance/report",
-        },
-        {
-          id: "absentees",
-          text: "Absentees",
-          route: "/dashboard/attendance/absentees",
+          id: "teacher-attendance",
+          text: "Teacher Attendance",
+          route: "/dashboard/teacher-attendance",
         },
       ],
     },
     {
       id: "examination",
-      icon: <BackpackIcon />,
+      icon: <AssignmentIcon />,
       text: "Examination",
       subItems: [
         {
           id: "exam-schedule",
           text: "Exam Schedule",
           route: "/dashboard/examination/schedule",
-        },
-        {
-          id: "exam-attendance",
-          text: "Exam Attendance",
-          route: "/dashboard/examination/attendance",
         },
         {
           id: "exam-results",
@@ -229,124 +219,48 @@ const Leftbar = ({ isCollapsed, onClose }) => {
       ],
     },
     {
-      id: "grades",
-      icon: <AssignmentIcon />,
-      text: "Grades",
-      subItems: [
-        {
-          id: "grade-entry",
-          text: "Grade Entry",
-          route: "/dashboard/grades/entry",
-        },
-        { id: "gradebook", text: "Gradebook", route: "/dashboard/grades/book" },
-        {
-          id: "report-cards",
-          text: "Report Cards",
-          route: "/dashboard/grades/reports",
-        },
-      ],
+      id: "courses",
+      icon: <SchoolIcon />,
+      text: "Courses",
     },
     {
-      id: "courses",
-      icon: <BookIcon />,
-      text: "Courses",
-      subItems: [
-        { id: "course-list", text: "Course List", route: "/dashboard/courses" },
-        { id: "subjects", text: "Subjects", route: "/dashboard/subjects" },
-        { id: "syllabus", text: "Syllabus", route: "/dashboard/syllabus" },
-      ],
+      id: "section",
+      icon: <CategoryIcon />,
+      text: "Section",
+    },
+    {
+      id: "subject",
+      icon: <MenuBookIcon />,
+      text: "Subject",
     },
     {
       id: "fees",
-      icon: <MoneyIcon />,
+      icon: <AccountBalanceIcon />,
       text: "Fees",
+    },
+    {
+      id: "library",
+      icon: <LibraryBooksIcon />,
+      text: "Library",
       subItems: [
         {
-          id: "fee-structure",
-          text: "Fee Structure",
-          route: "/dashboard/fees/structure",
+          id: "librarian",
+          text: "Librarian",
+          route: "/dashboard/library/librarian",
         },
         {
-          id: "fee-collection",
-          text: "Fee Collection",
-          route: "/dashboard/fees/collection",
-        },
-        {
-          id: "fee-receipts",
-          text: "Fee Receipts",
-          route: "/dashboard/fees/receipts",
-        },
-        {
-          id: "fee-overdue",
-          text: "Overdue Fees",
-          route: "/dashboard/fees/overdue",
+          id: "books",
+          text: "Books",
+          route: "/dashboard/library/books",
         },
       ],
     },
     {
-      id: "reports",
-      icon: <ReportIcon />,
-      text: "Reports",
-      subItems: [
-        {
-          id: "academic-report",
-          text: "Academic Report",
-          route: "/dashboard/reports/academic",
-        },
-        {
-          id: "attendance-report",
-          text: "Attendance Summary",
-          route: "/dashboard/reports/attendance",
-        },
-        {
-          id: "fee-summary",
-          text: "Fee Summary",
-          route: "/dashboard/reports/fees",
-        },
-        {
-          id: "student-progress",
-          text: "Student Progress",
-          route: "/dashboard/reports/progress",
-        },
-      ],
+      id: "all-users",
+      icon: <GroupIcon />,
+      text: "All Users",
     },
-    {
-      id: "communications",
-      icon: <MessageIcon />,
-      text: "Communications",
-      subItems: [
-        {
-          id: "announcements",
-          text: "Announcements",
-          route: "/dashboard/communications/announcements",
-        },
-        {
-          id: "messages",
-          text: "Messages",
-          route: "/dashboard/communications/messages",
-        },
-        {
-          id: "parent-notifications",
-          text: "Parent Notifications",
-          route: "/dashboard/communications/parents",
-        },
-      ],
-    },
-    {
-      id: "settings",
-      icon: <SettingsIcon />,
-      text: "Settings",
-      subItems: [
-        {
-          id: "school-info",
-          text: "School Info",
-          route: "/dashboard/settings/school",
-        },
-        { id: "users", text: "Users", route: "/dashboard/settings/users" },
-        { id: "roles", text: "Roles", route: "/dashboard/settings/roles" },
-        { id: "backup", text: "Backup", route: "/dashboard/settings/backup" },
-      ],
-    },
+
     {
       id: "logout",
       icon: <LogoutIcon />,
