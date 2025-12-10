@@ -72,13 +72,20 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Topbar = ({ toggleSidebar }) => {
+const Topbar = ({
+  drawerWidth,
+  collapsedWidth,
+  isSidebarOpen,
+  toggleSidebar,
+}) => {
   const theme = useTheme();
   const { isDarkMode, toggleTheme } = useThemeMode();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [appsAnchorEl, setAppsAnchorEl] = useState(null);
+
+  const sidebarWidth = isSidebarOpen ? drawerWidth : collapsedWidth;
 
   // Mock data
   const notifications = [
@@ -148,10 +155,12 @@ const Topbar = ({ toggleSidebar }) => {
     <AppBar
       position="fixed"
       sx={{
-        zIndex: (theme) => theme.zIndex.drawer + 1,
+        left: `${sidebarWidth}px`,
+        width: `calc(100% - ${sidebarWidth}px)`,
         background: theme.palette.background.default,
+        // background: "red",
         boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
-        backdropFilter: "blur(10px)",
+        transition: theme.transitions.create(["left", "width"]),
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between", px: { xs: 1, sm: 2 } }}>
@@ -165,45 +174,6 @@ const Topbar = ({ toggleSidebar }) => {
           >
             <MenuIcon />
           </IconButton>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Avatar
-              sx={{
-                mr: 2,
-                width: 42,
-                height: 42,
-                backgroundColor: theme.palette.background.default,
-                color: theme.palette.text.primary,
-                fontWeight: "bold",
-                fontSize: "1.2rem",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-              }}
-            >
-              <School />
-            </Avatar>
-            <Box>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: { xs: "16px", sm: "20px" },
-                  lineHeight: 1.2,
-                  color: theme.palette.text.primary,
-                }}
-              >
-                Future Leaders
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  opacity: 0.9,
-                  display: { xs: "none", sm: "block" },
-                  color: theme.palette.text.primary,
-                }}
-              >
-                School Management System
-              </Typography>
-            </Box>
-          </Box>
         </Box>
 
         {/* Center Section - Search */}

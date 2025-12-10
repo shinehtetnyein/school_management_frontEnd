@@ -311,7 +311,7 @@ const StudentCard = ({ student, theme }) => {
   const navigate = useNavigate();
   const handleViewStudent = useCallback(
     (studentId) => {
-      navigate(`/dashboard/students/${studentId}`);
+      navigate(`/students/${studentId}`);
     },
     [navigate]
   );
@@ -512,7 +512,10 @@ const Students = () => {
         }}
       >
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5 }}>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 600, mb: 0.5, color: theme.palette.text.primary }}
+          >
             Students
           </Typography>
         </Box>
@@ -587,7 +590,9 @@ const Students = () => {
           }}
         >
           {/* Title for the grid/list */}
-          <Typography variant="h6">Student Grid</Typography>
+          <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
+            Student Grid
+          </Typography>
 
           {/* Controls on the right */}
           <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
@@ -615,7 +620,11 @@ const Students = () => {
               variant="outlined"
               color="inherit"
               startIcon={<FilterList />}
-              sx={{ bgcolor: "background.paper", textTransform: "none" }}
+              sx={{
+                color: theme.palette.text.primary,
+                bgcolor: "background.paper",
+                textTransform: "none",
+              }}
             >
               Filter
             </Button>
@@ -636,7 +645,11 @@ const Students = () => {
               variant="outlined"
               color="inherit"
               startIcon={<SortByAlpha />}
-              sx={{ bgcolor: "background.paper", textTransform: "none" }}
+              sx={{
+                color: theme.palette.text.primary,
+                bgcolor: "background.paper",
+                textTransform: "none",
+              }}
             >
               Sort by A-Z
             </Button>

@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  BrowserRouter,
+} from "react-router-dom";
 import LoginForm from "./Components/LoginForm";
 import GoogleCallbackHandler from "./Components/GoogleCallbackHandler";
 import { ThemeProvider } from "./theme/context/ThemeContext";
-import Main from "./layouts/main/Main";
+import Main from "./layouts/main/DashboardLayout";
 import Dashboard from "./Components/AdminDashboard/Dashboard";
 import { AuthProvider } from "./contexts/AuthContext";
 import StudentList from "./Components/Student/StudentList";
@@ -19,39 +25,26 @@ import ExamAttend from "./Examination/ExamAttend";
 import ExamResult from "./Examination/ExamResult";
 import StudentDetailPage from "./Components/Student/Detail/StudentDetailPage";
 import Students from "./Components/Student/Students";
+import DashboardLayout from "./layouts/main/DashboardLayout";
 
 const RouteComponent = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
-
   return (
     <div>
       <ThemeProvider>
         <AuthProvider>
-          <Router>
+          <BrowserRouter>
             <Routes>
-              <Route path="/" index element={<LoginForm />}></Route>
               <Route path="/login" element={<LoginForm />} />
               <Route
                 path="/google/callback"
                 element={<GoogleCallbackHandler />}
               />
-              <Route
-                path="/dashboard"
-                element={
-                  <Main
-                    toggleSidebar={toggleSidebar}
-                    isSidebarCollapsed={isSidebarCollapsed}
-                  />
-                }
-              >
+              <Route path="/" element={<DashboardLayout />}>
                 {/* The index route for /dashboard */}
-                <Route index element={<Dashboard />} />
+                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="students" element={<StudentList />} />
-                <Route path="all" element={<Students />} />
+                <Route path="all-students" element={<Students />} />
                 <Route
                   path="students/:studentId"
                   element={<StudentDetailPage />}
@@ -73,7 +66,7 @@ const RouteComponent = () => {
                 </Route>
               </Route>
             </Routes>
-          </Router>
+          </BrowserRouter>
         </AuthProvider>
       </ThemeProvider>
     </div>
