@@ -29,9 +29,10 @@ import TableComponent from "../../Reuseable/TableComponent";
 import { useNavigate } from "react-router-dom";
 import DataServices from "../../services/data-services";
 import Configuration from "../../services/configuration";
+import { mockData } from "../../mockData";
 
-// fallback empty rows
-const rows = [];
+// Adding dummy data for the StudentList component
+const rows = mockData?.students || [];
 
 const StudentList = () => {
   const navigate = useNavigate();
@@ -85,14 +86,14 @@ const StudentList = () => {
     }
   };
 
-  useEffect(() => {
-    fetchStudents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   fetchStudents();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const handleViewStudent = useCallback(
     (studentId) => {
-      navigate(`/dashboard/students/${studentId}`);
+      navigate(`/students/${studentId}`);
     },
     [navigate]
   );

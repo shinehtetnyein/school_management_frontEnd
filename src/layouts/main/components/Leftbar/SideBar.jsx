@@ -140,6 +140,15 @@ const SideBar = ({ isSidebarOpen, onClose }) => {
       ],
     },
     {
+      id: "parents",
+      icon: <PeopleIcon/>,
+      text: "Parents",
+      subItems: [
+        {id: "all-parents", text: "All Parents", route: "/all-parents"},
+        {id: "parent-list", text: "Parent List", route: "/parents"},
+      ]
+    },
+    {
       id: "classes",
       icon: <ClassIcon />,
       text: "Classes",

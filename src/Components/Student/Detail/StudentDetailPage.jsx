@@ -39,6 +39,8 @@ import { mockData } from "../../../mockData";
 import StudentTimeTable from "./StudentTimeTable";
 import StudentLeaveAttendance from "./StudentLeaveAttendance";
 import StudentFees from "./StudentFees";
+import StudentExamResult from "./StudentExamResult";
+import Library from "../../Library";
 
 const { students: rows } = mockData;
 
@@ -114,7 +116,7 @@ const StudentDetailPage = () => {
               component={RouterLink}
               underline="hover"
               color="inherit"
-              to="/dashboard/students"
+              to="/all-students"
             >
               Student
             </Link>
@@ -511,14 +513,10 @@ const StudentDetailPage = () => {
           {tabValue === 2 && <StudentLeaveAttendance />}
           {tabValue === 3 && <StudentFees />}
           {tabValue === 4 && (
-            <Box sx={{ p: 3 }}>
-              <Typography>Exam & Results content goes here.</Typography>
-            </Box>
+            <StudentExamResult />
           )}
           {tabValue === 5 && (
-            <Box sx={{ p: 3 }}>
-              <Typography>Library content goes here.</Typography>
-            </Box>
+           <Library />
           )}
         </Grid>
       </Grid>

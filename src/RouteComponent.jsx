@@ -26,6 +26,8 @@ import ExamResult from "./Examination/ExamResult";
 import StudentDetailPage from "./Components/Student/Detail/StudentDetailPage";
 import Students from "./Components/Student/Students";
 import DashboardLayout from "./layouts/main/DashboardLayout";
+import Parents from "./Components/Parent/Parents";
+import ParentList from "./Components/Parent/ParentList";
 
 const RouteComponent = () => {
   return (
@@ -45,6 +47,12 @@ const RouteComponent = () => {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="students" element={<StudentList />} />
                 <Route path="all-students" element={<Students />} />
+                <Route
+                  path="students/:studentId"
+                  element={<StudentDetailPage />}
+                />
+                <Route path="parents" element={<Parents />} />
+                <Route path="all-parents" element={<ParentList />} />
                 <Route
                   path="students/:studentId"
                   element={<StudentDetailPage />}

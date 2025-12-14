@@ -293,7 +293,6 @@ const TableComponent = ({
       sx={{
         width: "100%",
         mb: 2,
-        backgroundColor: "#ffffff",
       }}
     >
       <EnhancedTableToolbar
@@ -322,11 +321,11 @@ const TableComponent = ({
             <TableRow
               sx={{
                 "& .MuiTableCell-root": {
-                  backgroundColor: "#009879",
+                  backgroundColor: "#f3f3f3ff",
                   color: "white",
                 },
                 "& .MuiTableSortLabel-root, & .MuiTableSortLabel-root:hover, & .MuiTableSortLabel-root.Mui-active":
-                  { color: "white" },
+                  { color: "#000", fontWeight:600},
               }}
             >
               {selectable && (
